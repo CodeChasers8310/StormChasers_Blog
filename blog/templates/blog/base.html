@@ -1,5 +1,4 @@
 {% load staticfiles %}
-<!DOCTYPE html>
 
 <html lang="en">
     <head>
@@ -11,15 +10,17 @@
         <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css' >
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
         <link rel="stylesheet" href="{% static 'css/blog.css' %}">
     </head>
     <body>
-        <div class="page-header">
+        <div class="">
             {% if user.is_authenticated %}
-                <a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+                <form action="{% url 'login' %}">
+                <button type="button" class="btn btn-primary">Sign In/Up</button>
+                </form>
+                    <!--<a  class="top-menu"><span>Sign In/Up</span></a>-->
             {% endif %}
-            <h1><a href="/">Storm Chasers Blog</a></h1>
+            <h1><a href="/"></a></h1>
         </div>
     </body>
 
@@ -87,15 +88,16 @@
 
 
         </div>
+        <!-- How do we center the buttons? -->
         <div class="navbar-default bg-dark center" id="myNavbar">
             <ul class="nav navbar-nav">
-                <li><a href="{}">Home</a></li>
-                <li><a href="{}">Dashboard</a></li>
-                <li><a href="{}">Blog</a></li>
-                <li><a href="{}">About Us</a></li>
-                <li><a href="{}">My Profile</a></li>
-                <li><a href="{}">My Subscriptions/Alerts</a></li>
-                <li><a href="{}">My Locations</a></li>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'blog' %}">Blog</a></li>
+                <li><a href="{% url 'about_us' %}">About Us</a></li>
+                <li><a href="{% url 'my_profile' %}">My Profile</a></li>
+                <li><a href="{% url 'subscriptions' %}">Subscriptions</a></li>
+                <li><a href="{% url 'locations' %}">Locations</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
@@ -115,4 +117,13 @@
     </div>
 </nav>
 </body>
+    <div class="content container">
+        <div class="row">
+            <div class="col-md-8">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
 </html>

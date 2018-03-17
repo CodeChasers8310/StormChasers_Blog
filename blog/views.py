@@ -5,7 +5,32 @@ from .forms import PostForm
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 
-login_required
+def home(request):
+    return render(request, 'blog/home.html')
+
+@login_required
+def dashboard(request):
+    return render(request, 'blog/dashboard.html')
+
+@login_required
+def locations(request):
+    return render(request, 'blog/locations.html')
+
+def blog(request):
+    return render(request, 'blog/blog.html')
+
+@login_required
+def my_profile(request):
+    return render(request, 'blog/my_profile.html')
+
+def about_us(request):
+    return render(request, 'blog/about_us.html')
+
+@login_required
+def subscriptions(request):
+    return render(request, 'blog/subscriptions.html')
+
+@login_required
 def post_list(request):
     posts = Post.objects.filter(published_date__lte=timezone.now())
     return render(request, 'blog/post_list.html', {'posts': posts})

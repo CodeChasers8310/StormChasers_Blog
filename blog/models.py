@@ -13,6 +13,7 @@ class profile(models.Model):
     # Not in data model
     is_storm_spotter = models.BooleanField(default=False)
 
+'''
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -21,10 +22,10 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+'''
 
 # This will change to blog_post
 class Post(models.Model):
-    #author = models.ForeignKey('auth.User')
     author = models.ForeignKey(User)
     title = models.CharField(max_length=200)
     text = models.TextField()
@@ -48,7 +49,7 @@ class blog_post(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(
         blank=True, null=True)
-    text = models.TextField()
+    text = models.TextField(blank=True)
     user_id = models.ForeignKey('auth.User')
 
 class top_post(blog_post):

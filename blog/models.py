@@ -13,6 +13,7 @@ class profile(models.Model):
     # Not in data model
     is_storm_spotter = models.BooleanField(default=False)
 
+# This is supposed to speed up querying users - but also breaks the model...
 '''
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -23,7 +24,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 '''
-
+''''''
 # This will change to blog_post
 class Post(models.Model):
     author = models.ForeignKey(User)

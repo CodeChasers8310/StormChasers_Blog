@@ -1,5 +1,4 @@
 {% load staticfiles %}
-<!DOCTYPE html>
 
 <html lang="en">
     <head>
@@ -11,108 +10,106 @@
         <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css' >
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
         <link rel="stylesheet" href="{% static 'css/blog.css' %}">
-    </head>
-    <body>
-        <div class="page-header">
-            {% if user.is_authenticated %}
-                <a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
-            {% endif %}
-            <h1><a href="/">Storm Chasers Blog</a></h1>
-        </div>
-    </body>
 
-    <style>
+        <style>
+
+        .navbar .navbar-nav {
+        display: inline-block;
+        float: none;
+        vertical-align: center;
+        }
+
+        .navbar .navbar-collapse {
+        text-align: center;
+        }
+
+        .gi-4x{font-size: 1.3em;}
+
         /* Remove the navbar's default margin-bottom and rounded borders */
         .navbar {
             margin-bottom: 0;
             border-radius: 0;
         }
-
-        .nav.nav-center {
-        margin:0;
-        float:none;
-        }
-
-        .navbar-inner{
-        text-align:center;
-        }
-
-        /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
         .row.content {
             height: 450px
         }
+        </style>
 
-        /* Set gray background color and 100% height */
-        .sidenav {
-            padding-top: 20px;
-            background-color: #f1f1f1;
-            height: 100%;
-        }
+    </head>
+<body>
 
-        /* Set black background color, white text and some padding */
-        footer {
-            background-color: #555;
-            color: white;
-            padding: 15px;
-        }
+<nav class="navbar navbar-inverse">
+<div class="container-fluid">
+   <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavbar">
+         <!--<span class="sr-only">Toggle navigation</span>-->
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" src="{% static 'images/logo.png' %}" href="{% url 'login' %}">Storm Chasers Blog</a>
+       <!--<img src="{% static 'images/logo.png' %}" height="60" width="60" >-->
 
-        /* On small screens, set height to 'auto' for sidenav and grid */
-        @media screen and (max-width: 767px) {
-            .sidenav {
-                height: auto;
-                padding: 15px;
-            }
+   </div>
+<div class="collapse navbar-collapse" id="topNavbar">
+      <ul class="nav navbar-nav">
+      <form class="navbar-form navbar-center">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search Tags">
+                </div>
+                <button type="submit" class="btn btn-primary">Chase!</button>
+      </form>
+      </ul>
+      <div class="navbar navbar-right">
+          <!--<li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>-->
+          {% if user.is_authenticated %}
+          <a href="{% url 'logout' %}">
+          <button type="submit" class="btn btn-success" style="padding: 14px 20px">Logout
+          </button></a>
+          {% else %}
+           <a href="{% url 'login' %}">
+              <button type="submit" class="btn btn-primary" style="padding: 14px">Sign In / Up
+           </button></a>
+          {% endif %}
+      </div>
+</div>
+</div>
+</nav>
 
-            .row.content {
-                height: auto;
-            }
-        }
-    </style>
-
-<body id="app-layout">
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-
-            <!-- Collapsed Hamburger -->
-            <button type="button" class="navbar-toggle" data-toggle="collapse"
-                    data-target="#myNavbar">
-                <span class="sr-only">Toggle Navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-
-
-        </div>
-        <div class="navbar-default bg-dark center" id="myNavbar">
+<nav class="navbar navbar-default" role="navigation">
+<div class="container">
+   <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#btmNavbar">
+         <span class="sr-only">Toggle navigation</span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+      </button>
+    </div>
+            <div class="collapse navbar-collapse" id="btmNavbar">
             <ul class="nav navbar-nav">
-                <li><a href="{}">Home</a></li>
-                <li><a href="{}">Dashboard</a></li>
-                <li><a href="{}">Blog</a></li>
-                <li><a href="{}">About Us</a></li>
-                <li><a href="{}">My Profile</a></li>
-                <li><a href="{}">My Subscriptions/Alerts</a></li>
-                <li><a href="{}">My Locations</a></li>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'blog' %}">Blog</a></li>
+                <li><a href="{% url 'about_us' %}">About Us</a></li>
+                <li><a href="{% url 'my_profile' %}">My Profile</a></li>
+                <li><a href="{% url 'subscriptions' %}">Subscriptions</a></li>
+                <li><a href="{% url 'locations' %}">Locations</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-                {% if user.is_authenticated %}
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="{% url 'logout' %}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
-                        </ul>
-                    </li>
-                {% else %}
-                    <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                {% endif %}
-            </ul>
+        </div>
+</div>
+</nav>
+</div>
+</body>
+
+    <div class="content container">
+        <div class="row">
+            <div class="col-md-8">
+                {% block content %}
+                {% endblock %}
+            </div>
         </div>
     </div>
-</nav>
-</body>
+
 </html>

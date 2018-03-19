@@ -1,8 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from .models import Post
-from .forms import PostForm
 from django.shortcuts import redirect
+from .models import top_post, response_post
 from django.contrib.auth.decorators import login_required
 
 def home(request):
@@ -16,6 +15,7 @@ def dashboard(request):
 def locations(request):
     return render(request, 'blog/locations.html')
 
+@login_required
 def blog(request):
     return render(request, 'blog/blog.html')
 
@@ -30,16 +30,21 @@ def about_us(request):
 def subscriptions(request):
     return render(request, 'blog/subscriptions.html')
 
+'''Uses old django girls post object
 @login_required
 def post_list(request):
     posts = Post.objects.filter(published_date__lte=timezone.now())
     return render(request, 'blog/post_list.html', {'posts': posts})
+'''
 
+'''Uses old django girls post object
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     return render(request, 'blog/post_detail.html', {'post': post})
+'''
 
+'''Uses old django girls post object
 @login_required
 def post_new(request):
     if request.method == "POST":
@@ -53,7 +58,9 @@ def post_new(request):
     else:
         form = PostForm()
     return render(request, 'blog/post_edit.html', {'form': form})
+'''
 
+'''Uses old django girls post object
 @login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -68,3 +75,4 @@ def post_edit(request, pk):
     else:
         form = PostForm(instance=post)
     return render(request, 'blog/post_edit.html', {'form': form})
+'''

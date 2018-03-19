@@ -1,6 +1,22 @@
+"""
+
+To use this script, I would start with a blank database - it probably won't work
+otherwise
+
+1. delete your db.sqlite3 database
+2. run <python manage.py makemigrations> if needed
+3. run <python manage.py migrate> to create a new db
+4. create a superuser with <python manage.py createsuperuser>
+5. run <python create_test_data.py>
+6. Enjoy the data
+
+"""
+
+
 import sqlite3
 from sqlite3 import Error
 from PIL import Image
+import io
 
 def create_connection(db_file):
     """ create a database connection to the SQLite database

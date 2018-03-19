@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.shortcuts import redirect
+from .models import top_post, response_post
 from django.contrib.auth.decorators import login_required
 
 def home(request):
@@ -14,6 +15,7 @@ def dashboard(request):
 def locations(request):
     return render(request, 'blog/locations.html')
 
+@login_required
 def blog(request):
     return render(request, 'blog/blog.html')
 

@@ -17,5 +17,5 @@ urlpatterns = [
     #url(r'^post/(?P<pk>\d+)/edit/$', views.post_edit, name='post_edit'),
     url(r'^accounts/login/$', authViews.login, name='login'),
     url(r'^accounts/logout/$', authViews.logout, name='logout', kwargs={'next_page': '/'}),
-    #url(r'^accounts/profile/$', views.post_list, name='post_list'),
+    url(r'^accounts/profile/$', views.blog, name='blog'),
     ]

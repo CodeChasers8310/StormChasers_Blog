@@ -1,12 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 class profile(models.Model):
-    user_id = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_image = models.BinaryField()
+    user_id = models.OneToOneField('auth.User', on_delete=models.CASCADE)
+    profile_image = models.ImageField(upload_to='profileImages/%Y/%m/%d/%H/%M/%S/%f')
     zip = models.IntegerField()
     latitude = models.DecimalField(max_digits=9,decimal_places=6)
     longitude = models.DecimalField(max_digits=9,decimal_places=6)
@@ -26,36 +26,48 @@ def save_user_profile(sender, instance, **kwargs):
 '''
 
 # Abstract Class
-class blog_post(models.Model):
-    blog_post_id = models.AutoField(primary_key=True)
-    # The users username should be inserted here
-    author = models.CharField(max_length=50)
-    created_date = models.DateTimeField(default=timezone.now)
-    published_date = models.DateTimeField(
-        blank=True, null=True)
-    text = models.TextField(blank=True)
-    user_id = models.ForeignKey('auth.User')
+# class blog_post(models.Model):
+#     blog_post_id = models.AutoField(primary_key=True)
+#     # The users username should be inserted here
+#     author = models.CharField(max_length=50)
+#     created_date = models.DateTimeField(default=timezone.now)
+#     published_date = models.DateTimeField(
+#         blank=True, null=True)
+#     text = models.TextField(blank=True)
+#     user_id = models.ForeignKey('auth.User')
 
-class top_post(blog_post):
+class top_post(models.Model):
+    post_id = models.AutoField(primary_key=True, default=None)
     title = models.CharField(max_length=100)
+    # The users username should be inserted here
+    created_date = models.DateTimeField(default=timezone.now)
+    published_date = models.DateTimeField(blank=True, null=True)
+    text = models.TextField(blank=True)
+    user_id = models.ForeignKey('auth.User', default=None)
 
-class response_post(blog_post):
+class response_post(models.Model):
+    post_id = models.AutoField(primary_key=True)
     top_post_id = models.ForeignKey('top_post', on_delete=models.PROTECT)
+    created_date = models.DateTimeField(default=timezone.now)
+    text = models.TextField(blank=True)
+    user_id = models.ForeignKey('auth.User', default=None)
+    top_post_id = models.ForeignKey('top_post')
 
 class tags(models.Model):
     tag_id = models.AutoField(primary_key=True)
     tag = models.CharField(max_length=25)
-    blog_post_id = models.ForeignKey('blog_post', on_delete=models.CASCADE)
+    top_post_id = models.ForeignKey('top_post', on_delete=models.CASCADE, blank=True, default=None)
+    response_post_id = models.ForeignKey('response_post', on_delete=models.CASCADE, blank=True, default=None)
 
 class image(models.Model):
     id = models.AutoField(primary_key=True)
-    image = models.BinaryField()
-    blog_post_id = models.ForeignKey('blog_post', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='blogImages/%Y/%m/%d')
+    top_post_id = models.ForeignKey('top_post', on_delete=models.CASCADE)
 
 class alerts(models.Model):
     alert_id = models.AutoField(primary_key=True)
     alert_name = models.CharField(max_length=128)
 
 class user_alerts(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     alert_id = models.ForeignKey(alerts, on_delete=models.CASCADE)

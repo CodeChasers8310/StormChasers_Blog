@@ -1,0 +1,52 @@
+{% extends 'blog/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+        <head>
+                <meta charset="utf-8">
+                <title>Minimal Django File Upload Example</title>
+        </head>
+
+<body>
+                 <!--List of uploaded documents -->
+                {% if images %}
+                        <ul>
+                        {% for image in images %}
+                                <li><a href="{{ image.image.url }}">{{ image.image.name }}
+                                <img src="{{ image.image.url }}" alt="{{ image.image.name }}">
+                                </a></li>
+                        {% endfor %}
+                        </ul>
+                {% else %}
+                        <p>No documents.</p>
+                {% endif %}
+
+                 <!--Upload form. Note enctype attribute! -->
+                <form action="{% url 'new_post' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <p>{{ form.non_field_errors }}</p>
+                        <p>{{ form.image.label_tag }} </p>
+                        <p>
+                                {{ form.image.errors }}
+                                {{ form.image }}
+                        </p>
+                        <p><input type="submit" value="Upload" /></p>
+                </form>
+
+        </body>
+
+
+  <form action="{% url 'new_post' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input id="id_image" type="file" name="myfile">
+    <button type="submit">Upload</button>
+  </form>
+
+  {% if uploaded_file_url %}
+    <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+  {% endif %}
+
+  <p><a href="{% url 'home' %}">Return to home</a></p>
+{% endblock %}

@@ -19,5 +19,5 @@ urlpatterns = [
     url(r'^accounts/login/$', authViews.login, name='login'),
     url(r'^accounts/logout/$', authViews.logout, name='logout', kwargs={'next_page': '/'}),
     url(r'^accounts/profile/$', views.blog, name='blog'),
-    url(r'^upload/$', views.image_upload, name='new_post'),
+    #url(r'^upload/$', views.image_upload, name='new_post'),
     ]

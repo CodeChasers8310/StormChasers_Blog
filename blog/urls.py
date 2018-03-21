@@ -13,9 +13,11 @@ urlpatterns = [
     url(r'^about_us/$', views.about_us, name='about_us'),
     url(r'^subscriptions/$', views.subscriptions, name='subscriptions'),
     #url(r'^post/(?P<pk>\d+)/$', views.post_detail, name='post_detail'),
-    #url(r'^post/new/$', views.post_new, name='post_new'),
+    url(r'^post/new/$', views.image_upload, name='new_post'),
+    url(r'^new_post/$', views.image_upload, name='new_post'),
     #url(r'^post/(?P<pk>\d+)/edit/$', views.post_edit, name='post_edit'),
     url(r'^accounts/login/$', authViews.login, name='login'),
     url(r'^accounts/logout/$', authViews.logout, name='logout', kwargs={'next_page': '/'}),
     url(r'^accounts/profile/$', views.blog, name='blog'),
+    #url(r'^upload/$', views.image_upload, name='new_post'),
     ]

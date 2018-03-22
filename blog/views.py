@@ -14,35 +14,96 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from .models import top_post, response_post, image
 from .forms import PostForm, ImageForm
+from random import randrange
 
 @login_required
-def image_upload(request):
-    print(request.FILES)
+def new_top_post(request):
     # Handle file upload
     if request.method == 'POST':
-        form = ImageForm(request.POST, request.FILES)
-        if form.is_valid():
-            #newdoc = image(image = request.FILES['myfile'], post_id=1)
-            topPostInstance = top_post.objects.get(post_id=1)
-            # topPostInstance = get_object_or_404(top_post, post_id=1)
-            newdoc = image(image = form.cleaned_data['image'], top_post_id=topPostInstance)
-            newdoc.save()
-            print('EASDADWQDASD')
+        # Use prefixes to get different parts of the form
+        imageForm = ImageForm(request.POST, request.FILES, prefix='ImageForm')
+        postForm = PostForm(request.POST, prefix='PostForm')
+        # Only proceed if both forms are valid
+        if imageForm.is_valid() and postForm.is_valid():
+            title = request.POST['PostForm-title']
+            text = request.POST['PostForm-title']
+            newTopPost = top_post(title=title,
+                                  text=text,
+                                  created_date=timezone.now(),
+                                  published_date=timezone.now(),
+                                  user_id=request.user,)
+            newTopPost.save()
+
+            # This needs to reference the above top post object
+            topPostInstance = get_object_or_404(top_post, post_id=newTopPost.post_id)
+            newImage = image(image = imageForm.cleaned_data['image'], top_post_id=topPostInstance)
+            newImage.save()
 
             # Redirect to the document list after POST
-            return render (request,'blog/new_post.html', {'form':form})
-            #return HttpResponseRedirect(reverse('StormChasers_Blog.blog.views.new_post'))
+            return redirect('post_detail', post_id=newTopPost.post_id)
+            # return redirect('blog/blog.html', blog_id=newTopPost.post_id)
+        else:
+            return render(request,'blog/blog.html',)
     else:
-        form = ImageForm() # A empty, unbound form
+        # Use prefixes to label different parts of the form
+        imageForm = ImageForm(prefix="ImageForm")
+        postForm = PostForm(prefix="PostForm")
 
     # Load documents for the list page
-    images = image.objects.all()
+    # Ghetto testing if you want to pass this to template
+    #images = image.objects.all()
 
     # Render list page with the documents and the form
     return render (request,
         'blog/new_post.html',
-        {'images': images, 'form': form},
+        {'imageForm': imageForm, 'postForm':postForm},
     )
+@login_required
+def post_detail(request, post_id):
+    topPost = get_object_or_404(top_post, post_id=post_id)
+    images = image.objects.filter(top_post_id=topPost.post_id)
+    return render(request, 'blog/post_detail.html', {'post': topPost, 'images':images})
+
+@login_required
+def post_edit(request, post_id):
+    topPost = get_object_or_404(top_post, post_id=post_id)
+    # Need to lay these out in an editable way
+    images = image.objects.filter(top_post_id=topPost.post_id)
+    if request.method == "POST":
+        postForm = PostForm(request.POST, prefix='PostForm')
+        if postForm.is_valid():
+            title = request.POST['PostForm-title']
+            text = request.POST['PostForm-title']
+            newTopPost = top_post(title=title,
+                                  text=text,
+                                  created_date=timezone.now(),
+                                  published_date=timezone.now(),
+                                  user_id=request.user,)
+            newTopPost.save()
+            return redirect('post_detail', post_id=newTopPost.post_id)
+
+    else:
+        form = PostForm(instance=topPost, prefix='PostForm')
+        #images = ImageForm()
+        return render(request, 'blog/post_edit.html', {'form': form, 'images':images})
+
+'''Uses old django girls post object
+@login_required
+def post_edit(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == "POST":
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.published_date = timezone.now()
+            post.save()
+            return redirect('post_detail', pk=post.pk)
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'blog/post_edit.html', {'form': form})
+'''
+
 
 def home(request):
     return render(request, 'blog/home.html')
@@ -57,7 +118,21 @@ def locations(request):
 
 @login_required
 def blog(request):
-    return render(request, 'blog/blog.html')
+    topPosts = top_post.objects.all().order_by('-post_id')
+    displayImages = []
+    # Get some default image if posts don't have an image
+    defaultImage = None#image.objects.get(image='blogImages/2018/03/20/instructor.jpg')
+    for post in topPosts:
+        allBlogImages = image.objects.filter(top_post_id=post.post_id)
+        try:
+            randomImage = allBlogImages[randrange(0, len(allBlogImages))]
+        except:
+            randomImage = defaultImage
+        displayImages.append(randomImage)
+    print(len(displayImages))
+    print()
+    print(len(topPosts))
+    return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
 
 @login_required
 def my_profile(request):
@@ -97,22 +172,5 @@ def post_new(request):
             return redirect('post_detail', pk=post.pk)
     else:
         form = PostForm()
-    return render(request, 'blog/post_edit.html', {'form': form})
-'''
-
-'''Uses old django girls post object
-@login_required
-def post_edit(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.method == "POST":
-        form = PostForm(request.POST, instance=post)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-            return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostForm(instance=post)
     return render(request, 'blog/post_edit.html', {'form': form})
 '''

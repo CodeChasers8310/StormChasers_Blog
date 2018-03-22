@@ -25,17 +25,6 @@ def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 '''
 
-# Abstract Class
-# class blog_post(models.Model):
-#     blog_post_id = models.AutoField(primary_key=True)
-#     # The users username should be inserted here
-#     author = models.CharField(max_length=50)
-#     created_date = models.DateTimeField(default=timezone.now)
-#     published_date = models.DateTimeField(
-#         blank=True, null=True)
-#     text = models.TextField(blank=True)
-#     user_id = models.ForeignKey('auth.User')
-
 class top_post(models.Model):
     post_id = models.AutoField(primary_key=True, default=None)
     title = models.CharField(max_length=100)

@@ -3,12 +3,13 @@ from .models import image, top_post
 # from .models import Post
 
 class PostForm(forms.ModelForm):
-    author = forms.CharField(max_length=128)
-    text = forms.CharField(max_length=245, label="Blog Text")
+    #author = forms.CharField(max_length=128)
+    title = forms.CharField(max_length=128)
+    text = forms.CharField(max_length=245, widget=forms.Textarea)
 
     class Meta:
         model = top_post
-        fields = ('title', 'author',)
+        fields = ('title', 'text',)
 
 class ImageForm(forms.ModelForm):
     image = forms.ImageField(label='Image')

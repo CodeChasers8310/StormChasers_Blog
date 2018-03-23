@@ -18,7 +18,8 @@ urlpatterns = [
     url(r'^accounts/logout/$', authViews.logout, name='logout', kwargs={'next_page': '/'}),
     url(r'^post/(?P<post_id>\d+)/edit/$', views.post_edit, name='post_edit'),
     url(r'^accounts/profile/$', views.my_profile, name='my_profile'),
-
+    # url(r'^delete-image/$', views.delete_image, name='delete-image'),
+    url(r'^delete-image/(?P<id>\d+)/$', views.delete_image, name='delete_image'),
     # url(r'^new_post/$', views.image_upload, name='new_post'),
     # url(r'^post/new/(?P<post_id>\d+)/$', views.blog, name='blog'),
     # url(r'^post/new/blog/$', views.blog, name='blog'),

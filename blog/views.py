@@ -97,9 +97,7 @@ def new_top_post(request):
                     photo.save()
                 except KeyError:
                     pass
-            messages.success(request,
-                             "Yeeew,check it out on the home page!")
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect(reverse('blog'))
         else:
             print (postForm.errors, formset.errors)
     else:
@@ -113,6 +111,15 @@ def post_detail(request, post_id):
     topPost = get_object_or_404(top_post, post_id=post_id)
     images = image.objects.filter(top_post_id=topPost.post_id)
     return render(request, 'blog/post_detail.html', {'post': topPost, 'images':images})
+
+@login_required
+def delete_image(request, id):
+    # Get the ID for the page to redirect to after deletion
+    postId = image.objects.get(id=id)
+    postId = postId.top_post_id.post_id
+
+    images = image.objects.get(id=id).delete()
+    return HttpResponseRedirect(reverse('post_edit', kwargs={'post_id':postId}))
 
 @login_required
 def post_edit(request, post_id):
@@ -131,7 +138,6 @@ def post_edit(request, post_id):
                                   user_id=request.user,)
             newTopPost.save()
             return redirect('post_detail', post_id=newTopPost.post_id)
-
     else:
         form = PostForm(instance=topPost, prefix='PostForm')
         #images = ImageForm()
@@ -179,9 +185,6 @@ def blog(request):
         except:
             randomImage = defaultImage
         displayImages.append(randomImage)
-    print(len(displayImages))
-    print()
-    print(len(topPosts))
     return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
 
 @login_required

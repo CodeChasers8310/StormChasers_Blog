@@ -6,7 +6,7 @@
 
         <head>
                 <meta charset="utf-8">
-                <title>Minimal Django File Upload Example</title>
+                <title>New Post</title>
         </head>
 
 <body>
@@ -36,9 +36,9 @@
     {% csrf_token %}
     <h5>Post Title</h5>
 
-    {% for hidden in postForm.hidden_fields %}
-        {{ hidden }}
-    {% endfor %}
+    <!--{% for hidden in postForm.hidden_fields %}-->
+        <!--{{ hidden }}-->
+    <!--{% endfor %}-->
 
     {% for field in postForm %}
         {{ field }} <br />

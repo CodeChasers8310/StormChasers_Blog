@@ -1,3 +1,4 @@
+
 {% extends 'blog/base.html' %}
 
 {% load static %}
@@ -6,43 +7,24 @@
 
         <head>
                 <meta charset="utf-8">
-                <title>Minimal Django File Upload Example</title>
+                <title>New Post</title>
         </head>
 
 <body>
 
-
-                 <!--Upload form. Note enctype attribute! -->
-                <!--<form action="{% url 'new_post' %}" method="post" enctype="multipart/form-data">-->
-                        <!--{% csrf_token %}-->
-                        <!--<h5>Post Title</h5>-->
-                        <!--<p>{{ postForm.title }}</p>-->
-                        <!--<h5>Post Text</h5>-->
-                        <!--<p>{{ postForm.text }}</p>-->
-
-                        <!--&lt;!&ndash;<p>{{ imageForm.non_field_errors }}</p>&ndash;&gt;-->
-                        <!--<p>{{ imageForm.image.label_tag }} </p>-->
-                        <!--<p>-->
-                                <!--&lt;!&ndash;{{ imageForm.image.errors }}&ndash;&gt;-->
-                                <!--{{ imageForm.image }}-->
-                        <!--</p>-->
-
-                        <!--<p><input type="submit" value="Upload" /></p>-->
-                <!--</form>-->
-
-
-
 <form id="post_form" method="post" action="" enctype="multipart/form-data">
     {% csrf_token %}
-    <h5>Post Title</h5>
+    <!--{% for hidden in postForm.hidden_fields %}-->
+        <!--{{ hidden }}-->
+    <!--{% endfor %}-->
 
-    {% for hidden in postForm.hidden_fields %}
-        {{ hidden }}
-    {% endfor %}
+    <!--{% for field in postForm %}-->
+    <!--{% endfor %}-->
 
-    {% for field in postForm %}
-        {{ field }} <br />
-    {% endfor %}
+    <h3>Post Title</h3>
+        <div class="container" style="padding-top: 10px; padding-btm:15px;"><h3>{{ postForm.title }} </h3></div>
+        <h4>Post Body</h4>
+    <div class="container" style="padding-top: 10px; padding-btm:15px;"><h6>{{ postForm.text }} </h6></div>
 
 <div class="container">
   <p class="bg-primary">Your First Image Uploaded Will Appear on the Main Blog Page</p>
@@ -55,25 +37,23 @@
 </form>
 
         </body>
-
-
   {% if uploaded_file_url %}
     <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
   {% endif %}
 
-  <p><a href="{% url 'home' %}">Return to home</a></p>
+  <!--<p><a href="{% url 'home' %}">Return to home</a></p>-->
 
    <!--List of uploaded documents -->
-   {% if images %}
-       <ul>
-   {% for image in images %}
-       <li><a href="{{ image.image.url }}">{{ image.image.name }}
-           <img src="{{ image.image.url }}" alt="{{ image.image.name }}">
-       </a></li>
-   {% endfor %}
-        </ul>
-   {% else %}
-       <p>No documents.</p>
-    {% endif %}
+   <!--{% if images %}-->
+       <!--<ul>-->
+   <!--{% for image in images %}-->
+       <!--<li><a href="{{ image.image.url }}">{{ image.image.name }}-->
+           <!--<img src="{{ image.image.url }}" alt="{{ image.image.name }}">-->
+       <!--</a></li>-->
+   <!--{% endfor %}-->
+        <!--</ul>-->
+   <!--{% else %}-->
+       <!--<p>No documents.</p>-->
+    <!--{% endif %}-->
 
 {% endblock %}

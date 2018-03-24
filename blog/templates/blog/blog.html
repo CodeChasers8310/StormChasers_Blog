@@ -1,18 +1,125 @@
 {% extends 'blog/base.html' %}
 
 {% block content %}
+
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Blog</title>
-    <h1>Blog</h1>
+<html>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open Sans">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+h1,h2,h3,h4,h5,h6 {font-family: "Oswald"}
+body {font-family: "Open Sans"}
+header {background-image: url("/static/images/blog_top.jpg");
+        background-size:100% 100%;
+        background-repeat: no-repeat;
+        }
+.content {margin: auto;}
+</style>
+<body class="w3-light-grey">
+
+<!-- Navigation bar with social media icons -->
+<div class="w3-bar w3-black w3-hide-small">
+  <a href="https://www.facebook.com/StormChasers/" class="w3-bar-item w3-button"><i class="fa fa-facebook-official"></i></a>
+  <a href="#" class="w3-bar-item w3-button"><i class="fa fa-instagram"></i></a>
+  <a href="#" class="w3-bar-item w3-button"><i class="fa fa-snapchat"></i></a>
+  <a href="#" class="w3-bar-item w3-button"><i class="fa fa-flickr"></i></a>
+  <a href="#" class="w3-bar-item w3-button"><i class="fa fa-twitter"></i></a>
+  <a href="#" class="w3-bar-item w3-button"><i class="fa fa-linkedin"></i></a>
+</div>
 
 
+<!-- w3-content defines a container for fixed size centered content,
+and is wrapped around the whole page content, except for the footer in this example -->
+<div class="w3-content" style="max-width:1600px;" align="center">
 
-</head>
-<body>
+  <!-- Header -->
+  <header class="w3-container w3-center w3-padding-48 w3-white">
+    <h1 class="w3-xxxlarge" style="color: #f4f4f4;"><b>Storm Chasers Hub</b></h1>
+    <h5 style="color: #f4f4f4;">Largest online community of <span class="w3-tag">Storm Experts</span></h5>
+  </header>
+
+  <a href="{% url 'new_post' %}">
+<button type="button" class="btn btn-block" style="padding: 10px; font-size: 24px; background-color: #963c91; color: #f9f9f9">Submit Post</button>
+  </a>
+  <!-- Grid -->
+    <div class="w3-row w3-padding w3-border w3-center">
+    <!-- Blog entries -->
+    <div class="w3-col w3-center">
+
+      {% for post in topPosts %}
+      <!-- Blog entry -->
+      <div class="w3-container w3-white w3-margin w3-padding-large w3-center">
+        <a href="{% url 'post_detail' post_id=post.post_id %}">
+          <div class="w3-center">
+          <h3>{{ post.title }}</h3>
+        </div>
+          <div class="w3-center">
+          <h5>{{ post.author }}<span class="w3-opacity">{{ post.published_date }}</span></h5>
+        </div>
+        </a>
+        <!-- This is how I am limiting the main blog page images to one image -->
+        {% for blogImages in post.image_set.all|slice:":1" %}
+        <div></div>
+        <div class="w3-justify">
+          <img src="{{ blogImages.image.url }}" alt="{{ blogImages.image.name }}" style="width:100%" class="w3-padding-16">
+
+          {% endfor %}
+          <p>{{ post.text }}</p>
+        </div>
+      </div>
+      <hr>
+      {% endfor %}
+
+    <!-- END BLOG ENTRIES -->
+    </div>
+  </div>
+
+<!-- END w3-content -->
+</div>
+
+<!-- Subscribe Modal -->
+<div id="subscribe" class="w3-modal w3-animate-opacity">
+  <div class="w3-modal-content" style="padding:32px">
+    <div class="w3-container w3-white">
+      <i onclick="document.getElementById('subscribe').style.display='none'" class="fa fa-remove w3-transparent w3-button w3-xlarge w3-right"></i>
+      <h2 class="w3-wide">SUBSCRIBE</h2>
+      <p>Join my mailing list to receive updates on the latest blog posts and other things.</p>
+      <p><input class="w3-input w3-border" type="text" placeholder="Enter e-mail"></p>
+      <button type="button" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom" onclick="document.getElementById('subscribe').style.display='none'">Subscribe</button>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="w3-container w3-dark-grey" style="padding:32px">
+  <a href="#" class="w3-button w3-black w3-padding-large w3-margin-bottom"><i class="fa fa-arrow-up w3-margin-right"></i>To the top</a>
+  <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+</footer>
+
+<!--Code from W3 Schools for the blog comments-->
+<script>
+// Toggle between hiding and showing blog replies/comments
+document.getElementById("myBtn").click();
+function myFunction(id) {
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+
+function likeFunction(x) {
+    x.style.fontWeight = "bold";
+    x.innerHTML = "✓ Liked";
+}
+</script>
 
 </body>
 </html>
+
 {% endblock %}

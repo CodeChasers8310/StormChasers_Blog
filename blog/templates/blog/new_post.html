@@ -1,0 +1,59 @@
+
+{% extends 'blog/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+        <head>
+                <meta charset="utf-8">
+                <title>New Post</title>
+        </head>
+
+<body>
+
+<form id="post_form" method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!--{% for hidden in postForm.hidden_fields %}-->
+        <!--{{ hidden }}-->
+    <!--{% endfor %}-->
+
+    <!--{% for field in postForm %}-->
+    <!--{% endfor %}-->
+
+    <h3>Post Title</h3>
+        <div class="container" style="padding-top: 10px; padding-btm:15px;"><h3>{{ postForm.title }} </h3></div>
+        <h4>Post Body</h4>
+    <div class="container" style="padding-top: 10px; padding-btm:15px;"><h6>{{ postForm.text }} </h6></div>
+
+<div class="container">
+  <p class="bg-primary">Your First Image Uploaded Will Appear on the Main Blog Page</p>
+</div>
+    {{ formset.management_form }}
+    {% for form in formset %}
+        {{ form }}
+    {% endfor %}
+    <input type="submit" name="submit" value="Submit" />
+</form>
+
+        </body>
+  {% if uploaded_file_url %}
+    <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+  {% endif %}
+
+  <!--<p><a href="{% url 'home' %}">Return to home</a></p>-->
+
+   <!--List of uploaded documents -->
+   <!--{% if images %}-->
+       <!--<ul>-->
+   <!--{% for image in images %}-->
+       <!--<li><a href="{{ image.image.url }}">{{ image.image.name }}-->
+           <!--<img src="{{ image.image.url }}" alt="{{ image.image.name }}">-->
+       <!--</a></li>-->
+   <!--{% endfor %}-->
+        <!--</ul>-->
+   <!--{% else %}-->
+       <!--<p>No documents.</p>-->
+    <!--{% endif %}-->
+
+{% endblock %}

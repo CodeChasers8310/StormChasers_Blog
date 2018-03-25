@@ -107,6 +107,13 @@ def new_top_post(request):
                   {'postForm': postForm, 'formset': formset})
 
 @login_required
+def post_deleted(request, id):
+    print(id)
+    post = top_post.objects.get(post_id=id).delete()
+    return render(request, 'blog/post_deleted_after.html')
+    # return HttpResponseRedirect(reverse('post_deleted'))#, kwargs={'id':id}))
+
+@login_required
 def post_detail(request, post_id):
     topPost = get_object_or_404(top_post, post_id=post_id)
     images = image.objects.filter(top_post_id=topPost.post_id)
@@ -117,7 +124,6 @@ def delete_image(request, id):
     # Get the ID for the page to redirect to after deletion
     postId = image.objects.get(id=id)
     postId = postId.top_post_id.post_id
-
     images = image.objects.get(id=id).delete()
     return HttpResponseRedirect(reverse('post_edit', kwargs={'post_id':postId}))
 

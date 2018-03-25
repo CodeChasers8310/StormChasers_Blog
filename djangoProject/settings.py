@@ -25,7 +25,7 @@ SECRET_KEY = 'm+*n0xk=w7soyls*vwk(5)iyn6w7+&x*8$x#l)*lot5_uvfpj#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'CodeChaser8310.pythonanywhere.com ']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

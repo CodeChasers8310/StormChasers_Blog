@@ -1,17 +1,23 @@
 from django.db import models
-# from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import User
+from django.conf import settings
 
-class profile(models.Model):
-    user_id = models.OneToOneField('auth.User', on_delete=models.CASCADE)
+
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    #user_id = models.OneToOneField('auth.User', on_delete=models.CASCADE)
     profile_image = models.ImageField(upload_to='profileImages/%Y/%m/%d/%H/%M/%S/%f')
     zip = models.IntegerField()
     latitude = models.DecimalField(max_digits=9,decimal_places=6)
     longitude = models.DecimalField(max_digits=9,decimal_places=6)
     # Not in data model
     is_storm_spotter = models.BooleanField(default=False)
+
+    def __str__(self):
+        return 'Profile for user {}'.format(self.user.username)
 
 # This is supposed to speed up querying users - but also breaks the model...
 '''

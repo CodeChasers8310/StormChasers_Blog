@@ -24,4 +24,6 @@ urlpatterns = [
     # url(r'^post/new/(?P<post_id>\d+)/$', views.blog, name='blog'),
     # url(r'^post/new/blog/$', views.blog, name='blog'),
     # url(r'^post/new/blog/blog.html', views.blog, name='blog'),
-    ]
+    url(r'^register/$', views.register, name='register'),
+    url(r'^pwd_recover/$', views.pwd_recover, name='pwd_recover'),
+]

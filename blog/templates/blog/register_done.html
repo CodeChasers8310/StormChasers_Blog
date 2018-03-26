@@ -1,0 +1,10 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<div class="container col-sm-4">
+
+  <br><br><h1 style="text-align:center; font-family:LemonMilk; font-size: 27px">Congratulations</h1><br><br>
+    <p>Your account has been successfully created. Now you can <a href="{% url "login" %}">sign in</a>.</p>
+{% endblock %}

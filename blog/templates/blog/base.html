@@ -66,30 +66,13 @@
       </form>
       </ul>
       <div class="navbar navbar-right">
-          <!--<li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>-->
           {% if user.is_authenticated %}
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="{% url 'logout' %}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
-                            <div class="w-100"></div>
-                                <div class="col">
-
-                                    <br><br>
-                                    <h5 style="text-align:center;">Account Management</h5>
-                                    <p style="text-align:center;"><a  class="btn btn-raised rounded btn-warning btn-sm"
-                                                        href="{% url 'password_change' %}">Change Password</a><br></p>
-                                </div>
-
-                            <div class="w-100"></div>
-                        </ul>
-                    </li>
-                {% else %}
-                    <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                    <li><a class="btn rounded btn-outline-info btn-sm" href="{% url 'register' %}" role="button">Register</a>
-                {% endif %}
+              <a href="{% url 'logout' %}"><i class="btn rounded btn-outline-info btn-sm"></i>Logout</a>
+              <a  class="btn rounded btn-outline-info btn-sm" href="{% url 'password_change' %}">Change Password</a>
+          {% else %}
+              <a href="{% url 'login' %}"><span class="btn rounded btn-outline-info btn-sm"></span> Login</a>
+              <a class="btn rounded btn-outline-info btn-sm" href="{% url 'register' %}" role="button">Register</a>
+          {% endif %}
       </div>
 </div>
 </div>

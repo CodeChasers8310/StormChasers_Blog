@@ -9,10 +9,16 @@ from django.conf import settings
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
     #user_id = models.OneToOneField('auth.User', on_delete=models.CASCADE)
-    profile_image = models.ImageField(upload_to='profileImages/%Y/%m/%d/%H/%M/%S/%f')
-    zip = models.IntegerField()
-    latitude = models.DecimalField(max_digits=9,decimal_places=6)
-    longitude = models.DecimalField(max_digits=9,decimal_places=6)
+    address = models.CharField(max_length=200, blank=True)
+    city = models.CharField(max_length=50, blank=True)
+    state = models.CharField(max_length=50, blank=True)
+    zipcode = models.CharField(max_length=10, blank=True)
+    #latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    #longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    cell_phone = models.CharField(max_length=50, blank=True)
+    created_date = models.DateTimeField(default=timezone.now)
+    profile_image = models.ImageField(upload_to='profileImages/%Y/%m/%d/%H/%M/%S/%f', blank=True)
+    #zip = models.IntegerField()
     # Not in data model
     is_storm_spotter = models.BooleanField(default=False)
 

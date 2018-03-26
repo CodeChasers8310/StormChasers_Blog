@@ -14,32 +14,35 @@
 
 <form id="post_form" method="post" action="" enctype="multipart/form-data">
     {% csrf_token %}
-    <!--{% for hidden in postForm.hidden_fields %}-->
-        <!--{{ hidden }}-->
-    <!--{% endfor %}-->
-
-    <!--{% for field in postForm %}-->
-    <!--{% endfor %}-->
-
     <h3>Post Title</h3>
         <div class="container" style="padding-top: 10px; padding-btm:15px;"><h3>{{ postForm.title }} </h3></div>
         <h4>Post Body</h4>
     <div class="container" style="padding-top: 10px; padding-btm:15px;"><h6>{{ postForm.text }} </h6></div>
 
 <div class="container">
-  <p class="bg-primary">Your First Image Uploaded Will Appear on the Main Blog Page</p>
+  <p class="bg-primary" style="padding: 6px;">Your First Image Uploaded Will Appear on the Main Blog Page</p>
 </div>
     {{ formset.management_form }}
     {% for form in formset %}
         {{ form }}
     {% endfor %}
+  <p class="bg-primary" style="margin-top:10px; padding: 6px;">Add tags separated by commas: tornado, storm, sky, nebraska</p>
+    <h3>Tags</h3>
+    <div class="container">{{ tagForm.tags }}</div>
+
+    <div style="margin-top: 10px;">
     <input type="submit" name="submit" value="Submit" />
+</div>
 </form>
 
+
+
+
+
+
+
+
         </body>
-  {% if uploaded_file_url %}
-    <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
-  {% endif %}
 
   <!--<p><a href="{% url 'home' %}">Return to home</a></p>-->
 

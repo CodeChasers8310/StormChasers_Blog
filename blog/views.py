@@ -14,55 +14,10 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from .models import top_post, response_post, image
 from .models import image as dbimage
-from .forms import PostForm, ImageForm
+from .forms import PostForm, ImageForm, TagForm
 from random import randrange
 from django.contrib import messages
 
-
-''' Before multi-form - this is only one image at a time
-# @login_required
-# def new_top_post(request):
-#     # Handle file upload
-#     if request.method == 'POST':
-#         # Use prefixes to get different parts of the form
-#         imageForm = ImageForm(request.POST, request.FILES, prefix='ImageForm')
-#         postForm = PostForm(request.POST, prefix='PostForm')
-#         # Only proceed if both forms are valid
-#         if imageForm.is_valid() and postForm.is_valid():
-#             title = request.POST['PostForm-title']
-#             text = request.POST['PostForm-title']
-#             newTopPost = top_post(title=title,
-#                                   text=text,
-#                                   created_date=timezone.now(),
-#                                   published_date=timezone.now(),
-#                                   user_id=request.user,)
-#             newTopPost.save()
-#
-#             # This needs to reference the above top post object
-#             topPostInstance = get_object_or_404(top_post, post_id=newTopPost.post_id)
-#             newImage = image(image = imageForm.cleaned_data['image'], top_post_id=topPostInstance)
-#             newImage.save()
-#
-#             # Redirect to the document list after POST
-#             return redirect('post_detail', post_id=newTopPost.post_id)
-#             # return redirect('blog/blog.html', blog_id=newTopPost.post_id)
-#         else:
-#             return render(request,'blog/blog.html',)
-#     else:
-#         # Use prefixes to label different parts of the form
-#         imageForm = ImageForm(prefix="ImageForm")
-#         postForm = PostForm(prefix="PostForm")
-#
-#     # Load documents for the list page
-#     # Ghetto testing if you want to pass this to template
-#     #images = image.objects.all()
-#
-#     # Render list page with the documents and the form
-#     return render (request,
-#         'blog/new_post.html',
-#         {'imageForm': imageForm, 'postForm':postForm},
-#     )
-'''
 
 @login_required
 def new_top_post(request):
@@ -77,7 +32,6 @@ def new_top_post(request):
 
 
         if postForm.is_valid() and formset.is_valid():
-            print(request.POST)
             title = request.POST['title']
             text = request.POST['text']
             newTopPost = top_post(title=title,
@@ -88,7 +42,6 @@ def new_top_post(request):
             newTopPost.save()
             # Get object to save with images
             topPostInstance = get_object_or_404(top_post, post_id=newTopPost.post_id)
-            print(formset.cleaned_data)
 
             for form in formset.cleaned_data:
                 try:
@@ -103,8 +56,12 @@ def new_top_post(request):
     else:
         postForm = PostForm()
         formset = ImageFormSet(queryset=dbimage.objects.none())
+        tagForm = TagForm()
     return render(request, 'blog/new_post.html',
-                  {'postForm': postForm, 'formset': formset})
+                  {'postForm': postForm, 'formset': formset, 'tagForm':TagForm})
+
+
+
 
 @login_required
 def post_deleted(request, id):

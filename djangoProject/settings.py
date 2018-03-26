@@ -123,3 +123,9 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/uploadedMedia/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploadedMedia')
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'kmlumbard.dev@gmail.com'
+EMAIL_HOST_PASSWORD = 'larousse6'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

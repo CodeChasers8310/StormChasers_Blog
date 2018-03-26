@@ -1,27 +1,52 @@
-<!-- Including the base here makes the login not load - remember to add the %s -->
-<!--{ extends 'blog/base.html' } -->
-
+{% extends "blog/base.html" %}
 
 {% block content %}
-    <h2>Login</h2>
-    {% if form.errors %}
-        <p>Your username and password didn't match. Please try again.</p>
-    {% endif %}
+<h1 style="text-align:center; font-family:LemonMilk; font-size: 27px">Sign in</h1><br>
+        <div class="row">
+            <div class="col">
 
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <table>
-            <tr>
-                <td>{{ form.username.label_tag }}</td>
-                <td>{{ form.username }}</td>
-            </tr>
-            <tr>
-                <td>{{ form.password.label_tag }}</td>
-                <td>{{ form.password }}</td>
-            </tr>
-        </table>
+                {% if form.errors %}
+                    <p>Your username and password didn't match. Please try again.</p>
+                {% endif %}
+                <div class="form-group">
+                <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
 
-        <input type="submit" value="login"/>
-        <input type="hidden" name="next" value="{{ next }}"/>
-    </form>
+                    <div class="form-group">
+                      <label for="{{ form.username.label_tag }}</label>
+                      <input type="text" class="form-control" id="{{ form.username }}
+                      <small id="emailHelp" class="form-text text-muted"</small>
+                    </div>
+                    <div class="form-group">
+                      <label for="{{ form.password.label_tag }}</label>
+                      <input type="password" class="form-control" id="{{ form.password }}
+                    </div><br>
+
+                    <!-- <button type="submit" class="btn btn-primary">Submit</button>
+
+
+
+
+
+
+                     <table>
+                         <tr>
+                             <td>{{ form.username.label_tag }}</td>
+                             <td>{{ form.username }}</td>
+                         </tr>
+                         <tr>
+                             <td>{{ form.password.label_tag }}</td>
+                             <td>{{ form.password }}</td>
+                         </tr>
+                    </table> -->
+
+              </form>
+              <div class="text-center">
+              <input class="btn btn-raised btn-success" type="submit" value="login"/>
+              <input type="hidden" name="next" value="{{ next }}"/>
+
+        <p><br><a href="{% url "password_reset" %}">Forgot password?</a></p>
+            </div>
+          </div>
+            </div>
 {% endblock %}

@@ -1,11 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.shortcuts import redirect
-from .models import top_post, response_post
+from .models import top_post, response_post, Profile
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.forms import modelformset_factory
-from .forms import ImageForm, PostForm
+#from .forms import ImageForm, PostForm
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render_to_response
@@ -17,6 +17,7 @@ from .models import image as dbimage
 from .forms import PostForm, ImageForm
 from random import randrange
 from django.contrib import messages
+from .forms import *
 
 
 ''' Before multi-form - this is only one image at a time
@@ -227,3 +228,27 @@ def post_new(request):
         form = PostForm()
     return render(request, 'blog/post_edit.html', {'form': form})
 '''
+
+def pwd_recover(request):
+   return render(request, 'blog/pwd_recover.html',
+                 {'xxx': pwd_recover})
+
+def register(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+
+        if user_form.is_valid():
+            # Create a new user object but avoid saving it yet
+            new_user = user_form.save(commit=False)
+            # Set the chosen password
+            new_user.set_password(user_form.cleaned_data['password'])
+            # Save the User object
+            new_user.save()
+            # Create the user profile
+            profile = Profile.objects.create(user=new_user)
+            return render(request,
+                          'blog/register_done.html',
+                          {'new_user': new_user})
+    else:
+        user_form = UserRegistrationForm()
+    return render(request, 'blog/register.html', {'user_form': user_form})

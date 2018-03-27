@@ -25,7 +25,7 @@ SECRET_KEY = 'm+*n0xk=w7soyls*vwk(5)iyn6w7+&x*8$x#l)*lot5_uvfpj#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'WillieWetz.pythonanywhere.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -118,8 +118,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = '/static/'
 
 MEDIA_URL = '/uploadedMedia/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploadedMedia')
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'kmlumbard.dev@gmail.com'
+EMAIL_HOST_PASSWORD = 'larousse6'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

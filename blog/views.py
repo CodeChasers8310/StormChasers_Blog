@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.shortcuts import redirect
-from .models import top_post, response_post
+from .models import top_post, response_post, Profile
+from .models import tags as modelsTag
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.forms import modelformset_factory
-from .forms import ImageForm, PostForm
+#from .forms import ImageForm, PostForm
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render_to_response
@@ -17,6 +18,7 @@ from .models import image as dbimage
 from .forms import PostForm, ImageForm, TagForm
 from random import randrange
 from django.contrib import messages
+from .forms import *
 
 
 @login_required
@@ -25,15 +27,17 @@ def new_top_post(request):
     ImageFormSet = modelformset_factory(dbimage,
                                         form=ImageForm, extra=10)
 
-    if request.method == 'POST':
+    if request.method == 'GET':
         postForm = PostForm(request.POST)
         formset = ImageFormSet(request.POST, request.FILES,
                                queryset=dbimage.objects.none())
+        tagsForm = TagForm(request.POST)
 
-
-        if postForm.is_valid() and formset.is_valid():
+        if postForm.is_valid() and formset.is_valid() and tagsForm.is_valid():
             title = request.POST['title']
             text = request.POST['text']
+            tags = request.POST['tag']
+            tags = tags.split(',')
             newTopPost = top_post(title=title,
                                   text=text,
                                   created_date=timezone.now(),
@@ -42,7 +46,6 @@ def new_top_post(request):
             newTopPost.save()
             # Get object to save with images
             topPostInstance = get_object_or_404(top_post, post_id=newTopPost.post_id)
-
             for form in formset.cleaned_data:
                 try:
                     image = form['image']
@@ -50,9 +53,15 @@ def new_top_post(request):
                     photo.save()
                 except KeyError:
                     pass
+
+            for tag in tags:
+                tag = tag.strip()
+                newTag = modelsTag(tag=tag, top_post_id=topPostInstance)
+                newTag.save()
+
             return HttpResponseRedirect(reverse('blog'))
         else:
-            print (postForm.errors, formset.errors)
+            print (tagsForm.errors)#, formset.errors)
     else:
         postForm = PostForm()
         formset = ImageFormSet(queryset=dbimage.objects.none())
@@ -151,6 +160,33 @@ def blog(request):
     return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
 
 @login_required
+def blog_search(request, formTags):
+    if request.method == 'POST':
+        postIds = []
+        for tag in formTags:
+            dataBaseTags = modelsTag.objects.filter(tag=tag)
+            for dataBaseTag in dataBaseTags:
+                postIds.append(dataBaseTag.top_post_id)
+        #topPosts = top_post.objects.all().order_by('-post_id')
+        topPosts = top_post.objects.filter(post_id__in=postIds)
+        displayImages = []
+        # Get some default image if posts don't have an image
+        defaultImage = None
+        for post in topPosts:
+            allBlogImages = image.objects.filter(top_post_id=post.post_id)
+            try:
+                randomImage = allBlogImages[randrange(0, len(allBlogImages))]
+            except:
+                randomImage = defaultImage
+            displayImages.append(randomImage)
+        return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
+    else:
+        topPosts = None
+        displayImages = None
+        return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
+
+
+@login_required
 def my_profile(request):
     return render(request, 'blog/my_profile.html')
 
@@ -190,3 +226,28 @@ def post_new(request):
         form = PostForm()
     return render(request, 'blog/post_edit.html', {'form': form})
 '''
+
+def pwd_recover(request):
+   return render(request, 'blog/pwd_recover.html',
+                 {'xxx': pwd_recover})
+
+def register(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+
+        if user_form.is_valid():
+            # Create a new user object but avoid saving it yet
+            new_user = user_form.save(commit=False)
+            # Set the chosen password
+            new_user.set_password(user_form.cleaned_data['password'])
+            # Save the User object
+            new_user.save()
+            # Create the user profile
+            profile = Profile.objects.create(user=new_user)
+            return render(request, 'blog/my_profile.html', {'profile': profile, 'new_user': new_user})
+           # return render(request,
+                        #  'blog/register_done.html',
+                          #{'new_user': new_user})
+    else:
+        user_form = UserRegistrationForm()
+    return render(request, 'blog/register.html', {'user_form': user_form})

@@ -1,0 +1,51 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+   <div class="container col-sm-4">
+     <br><br><h1 style="text-align:center; font-family:LemonMilk; font-size: 27px">Register</h1><br>
+     <div class="row">
+        <div class="col">
+
+
+    <div class="form-group">
+		<form action="." method="post">
+        <!-- {{ user_form.as_p }} -->
+        {% csrf_token %}
+        <!-- <div class="form-row"> -->
+          <div class="form-group">
+            <label for="{{ user_form.username.label_tag }}</label>
+            <input type="text" class="form-control" id="{{ user_form.username }}
+          </div>
+          <div class="form-group">
+            <label for="{{ user_form.first_name.label_tag }}</label>
+            <input type="text" class="form-control" id="{{ user_form.first_name }}
+          </div>
+            <div class="form-group">
+            <label for="{{ user_form.last_name.label_tag }}</label>
+            <input type="text" class="form-control" id="{{ user_form.last_name }}
+          </div>
+        <!-- </div> -->
+          <div class="form-group">
+            <label for="{{ user_form.email.label_tag }}</label>
+            <input type="email" class="form-control" id="{{ user_form.email }}
+          </div>
+          <div class="form-group">
+            <label for="{{ user_form.password.label_tag }}</label>
+            <input type="password" class="form-control" id="{{ user_form.password }}
+          </div>
+          <div class="form-group">
+            <label for="{{ user_form.password2.label_tag }}</label>
+            <input type="password" class="form-control" id="{{ user_form.password2 }}
+          </div>
+
+        </div><br>
+
+
+        <input class="btn btn-raised btn-success text-center" type="submit" value="Create my account"><br><br><br>
+
+
+     </div>
+   </form>
+   </div>
+
+{% endblock %}

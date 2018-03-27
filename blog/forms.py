@@ -1,5 +1,5 @@
 from django import forms
-from .models import image, top_post, tags
+from .models import image, top_post, User, tags
 
 class PostForm(forms.ModelForm):
     #author = forms.CharField(max_length=128)
@@ -17,7 +17,7 @@ class ImageForm(forms.ModelForm):
         fields = ('image',)
 
 class TagForm(forms.ModelForm):
-    tags = forms.CharField(max_length=150, widget=forms.Textarea(attrs={'rows':2, 'cols':45}))
+    tag = forms.CharField(max_length=150, widget=forms.Textarea(attrs={'rows':2, 'cols':45}))
 
     class Meta:
         model = tags
@@ -31,3 +31,17 @@ class PostForm(forms.ModelForm):
         #model = Post
         fields = ('title', 'text',)
 '''
+
+class UserRegistrationForm(forms.ModelForm):
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email' )
+
+    def clean_password2(self):
+        cd = self.cleaned_data
+        if cd['password'] != cd['password2']:
+            raise forms.ValidationError('Passwords don\'t match.')
+        return cd['password2']

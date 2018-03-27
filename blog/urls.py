@@ -9,6 +9,9 @@ urlpatterns = [
     url(r'^dashboard/$', views.dashboard, name='dashboard'),
     url(r'^locations/$', views.locations, name='locations'),
     url(r'^blog/$', views.blog, name='blog'),
+    # url(r'^blog_search/(?P<formTags>\d+)/$', views.blog_search, name='blog_search'),
+    url(r'^blog_search/(?P<formTags>\w+)/$', views.blog_search, name='blog_search'),
+    # (?P<author>\w+)
     url(r'^my_profile/$', views.my_profile, name='my_profile'),
     url(r'^about_us/$', views.about_us, name='about_us'),
     url(r'^subscriptions/$', views.subscriptions, name='subscriptions'),
@@ -26,4 +29,6 @@ urlpatterns = [
     # url(r'^post/new/(?P<post_id>\d+)/$', views.blog, name='blog'),
     # url(r'^post/new/blog/$', views.blog, name='blog'),
     # url(r'^post/new/blog/blog.html', views.blog, name='blog'),
-    ]
+    url(r'^register/$', views.register, name='register'),
+    url(r'^pwd_recover/$', views.pwd_recover, name='pwd_recover'),
+]

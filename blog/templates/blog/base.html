@@ -58,7 +58,9 @@
    </div>
 <div class="collapse navbar-collapse" id="topNavbar">
       <ul class="nav navbar-nav">
-      <form class="navbar-form navbar-center">
+      <form method="get" class="navbar-form navbar-center" action="{% url 'blog_search' formTags='test' %}">
+              {% csrf_token %}
+
                 <div class="form-group">
                     <input type="text" size="55" class="form-control" placeholder="Search Tags">
                 </div>
@@ -66,15 +68,12 @@
       </form>
       </ul>
       <div class="navbar navbar-right">
-          <!--<li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>-->
           {% if user.is_authenticated %}
-          <a href="{% url 'logout' %}">
-          <button type="submit" class="btn btn-success" style="padding: 14px 20px">Logout
-          </button></a>
+              <a href="{% url 'logout' %}"><i class="btn rounded btn-outline-info btn-sm"></i>Logout</a>
+              <a  class="btn rounded btn-outline-info btn-sm" href="{% url 'password_change' %}">Change Password</a>
           {% else %}
-           <a href="{% url 'login' %}">
-              <button type="submit" class="btn btn-primary" style="padding: 14px">Sign In / Up
-           </button></a>
+              <a href="{% url 'login' %}"><span class="btn rounded btn-outline-info btn-sm"></span> Login</a>
+              <a class="btn rounded btn-outline-info btn-sm" href="{% url 'register' %}" role="button">Register</a>
           {% endif %}
       </div>
 </div>

@@ -23,6 +23,8 @@ class TagForm(forms.ModelForm):
         model = tags
         fields = ('tag',)
 
+class SearchForm(forms.ModelForm):
+    string = forms.CharField(max_length=200)
 
 '''Uses old django girls post object
 class PostForm(forms.ModelForm):

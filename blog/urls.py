@@ -11,7 +11,7 @@ urlpatterns = [
     url(r'^blog/$', views.blog, name='blog'),
     # url(r'^blog_search/(?P<formTags>\d+)/$', views.blog_search, name='blog_search'),
     url(r'^blog_search/(?P<formTags>\w+)/$', views.blog_search, name='blog_search'),
-    # (?P<author>\w+)
+    url(r'^blog_search/$', views.blog_search, name='blog_search'),
     url(r'^my_profile/$', views.my_profile, name='my_profile'),
     url(r'^about_us/$', views.about_us, name='about_us'),
     url(r'^subscriptions/$', views.subscriptions, name='subscriptions'),

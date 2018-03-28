@@ -27,7 +27,7 @@ def new_top_post(request):
     ImageFormSet = modelformset_factory(dbimage,
                                         form=ImageForm, extra=10)
 
-    if request.method == 'GET':
+    if request.method == 'POST':
         postForm = PostForm(request.POST)
         formset = ImageFormSet(request.POST, request.FILES,
                                queryset=dbimage.objects.none())
@@ -68,9 +68,6 @@ def new_top_post(request):
         tagForm = TagForm()
     return render(request, 'blog/new_post.html',
                   {'postForm': postForm, 'formset': formset, 'tagForm':TagForm})
-
-
-
 
 @login_required
 def post_deleted(request, id):
@@ -160,14 +157,19 @@ def blog(request):
     return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
 
 @login_required
-def blog_search(request, formTags):
-    if request.method == 'POST':
+def blog_search(request):#, formTags):
+    if request.method == 'GET':
+        # SearchForm
+        newSearch = request.GET['search']
+        # I should upgrade this to also split on a comma
+        searchTerms = newSearch.split()
         postIds = []
-        for tag in formTags:
+        for tag in searchTerms:
             dataBaseTags = modelsTag.objects.filter(tag=tag)
             for dataBaseTag in dataBaseTags:
-                postIds.append(dataBaseTag.top_post_id)
-        #topPosts = top_post.objects.all().order_by('-post_id')
+                post = dataBaseTag.top_post_id
+                postIds.append(post.post_id)
+        # #topPosts = top_post.objects.all().order_by('-post_id')
         topPosts = top_post.objects.filter(post_id__in=postIds)
         displayImages = []
         # Get some default image if posts don't have an image
@@ -179,12 +181,21 @@ def blog_search(request, formTags):
             except:
                 randomImage = defaultImage
             displayImages.append(randomImage)
-        return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
+        # Display search error if no posts are found
+        if len(topPosts) > 0:
+            return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
+        else:
+            topPosts = []
+            errorPost = top_post(post_id=999999999, published_date=None, title="No Results!", text='Separate Search Terms by a Space', user_id=request.user)
+            errorPost.author = 'Oh No'
+            topPosts.append(errorPost)
+
+            return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
+
     else:
         topPosts = None
         displayImages = None
         return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
-
 
 @login_required
 def my_profile(request):

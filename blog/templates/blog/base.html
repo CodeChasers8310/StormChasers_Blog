@@ -58,11 +58,11 @@
    </div>
 <div class="collapse navbar-collapse" id="topNavbar">
       <ul class="nav navbar-nav">
-      <form method="get" class="navbar-form navbar-center" action="{% url 'blog_search' formTags='test' %}">
-              {% csrf_token %}
-
+      <form id=search_form method="get" class="navbar-form navbar-center" action="{% url 'blog_search' %}">
+              <!--{% csrf_token %}-->
                 <div class="form-group">
-                    <input type="text" size="55" class="form-control" placeholder="Search Tags">
+
+                    <input type="text" size="55"  name="search" class="form-control" placeholder="Search Tags">
                 </div>
                 <button type="submit" class="btn btn-primary">Chase!</button>
       </form>

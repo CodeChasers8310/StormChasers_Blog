@@ -1,0 +1,44 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+{% load static %}
+
+<html lang="en">
+
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>Post Successfully Deleted</title>
+</head>
+<body>
+
+<h1 style="padding: 20px; font-family: 'Bookman Old Style';">Post Successfully Deleted</h1>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+h1,h2,h3,h4,h5,h6 {font-family: "Oswald"}
+.content {margin: auto;}
+</style>
+<body class="w3-light-grey">
+
+
+<!-- w3-content defines a container for fixed size centered content,
+and is wrapped around the whole page content, except for the footer in this example -->
+<div class="w3-content" style="max-width:1600px;" align="center">
+
+    <div>
+<img src="{% static 'images/put-trash-in-can.jpg' %}" alt="Mountain View">
+    </div>
+
+    <script>
+  window.setTimeout(function(){
+    window.location.href = "{% url 'blog' %}";
+  }, 1500);
+</script>
+
+</body>
+</html>
+
+{% endblock %}

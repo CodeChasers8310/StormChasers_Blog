@@ -37,7 +37,7 @@ div.desc {
         </a>
     </div>
     <div class="container" style="padding: 4px">
-        <a href="{% url 'post_edit' post_id=post.post_id %}">
+        <a href="{% url 'post_deleted' id=post.post_id %}">
          <button type="button" class="btn btn-danger btn-block" style="font-size: 18px">Delete Post</button>
         </a>
     </div>
@@ -68,10 +68,8 @@ div.desc {
   <a target="_blank" href="{{ image.image.url }}">
     <img src="{{ image.image.url }}" alt="{{ image.image.name }}" width="300" height="200">
   </a>
-  <!--<div class="desc">Add a description of the image here</div>-->
 </div>
 
-        <!--<div><img src="{{ image.image.url }} "></div>-->
         {% endfor %}
 
     </div>

@@ -1,11 +1,10 @@
 from django import forms
-from .models import image, top_post, User
-# from .models import Post
+from .models import image, top_post, User, tags
 
 class PostForm(forms.ModelForm):
     #author = forms.CharField(max_length=128)
     title = forms.CharField(max_length=128)
-    text = forms.CharField(max_length=245, widget=forms.Textarea)
+    text = forms.CharField(max_length=500, widget=forms.Textarea(attrs={'rows':7, 'cols':77}))
 
     class Meta:
         model = top_post
@@ -17,6 +16,16 @@ class ImageForm(forms.ModelForm):
         model = image
         fields = ('image',)
 
+class TagForm(forms.ModelForm):
+    tag = forms.CharField(max_length=150, widget=forms.Textarea(attrs={'rows':2, 'cols':45}))
+
+    class Meta:
+        model = tags
+        fields = ('tag',)
+
+class SearchForm(forms.ModelForm):
+    string = forms.CharField(max_length=200)
+
 '''Uses old django girls post object
 class PostForm(forms.ModelForm):
 
@@ -24,6 +33,7 @@ class PostForm(forms.ModelForm):
         #model = Post
         fields = ('title', 'text',)
 '''
+
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)

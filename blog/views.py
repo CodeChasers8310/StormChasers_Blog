@@ -32,8 +32,7 @@ def new_top_post(request):
         formset = ImageFormSet(request.POST, request.FILES,
                                queryset=dbimage.objects.none())
         tagsForm = TagForm(request.POST)
-
-        if postForm.is_valid() and formset.is_valid() and tagsForm.is_valid():
+        if postForm.is_valid() and formset.is_valid():
             title = request.POST['title']
             text = request.POST['text']
             tags = request.POST['tag']
@@ -186,7 +185,7 @@ def blog_search(request):#, formTags):
             return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
         else:
             topPosts = []
-            errorPost = top_post(post_id=999999999, published_date=None, title="No Results!", text='Separate Search Terms by a Space', user_id=request.user)
+            errorPost = top_post(post_id=999999999, published_date=timezone.now(), title="No Results!", text='Separate Search Terms by a Space', user_id=request.user)
             errorPost.author = 'Oh No'
             topPosts.append(errorPost)
 

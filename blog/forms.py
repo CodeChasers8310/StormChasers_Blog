@@ -1,5 +1,5 @@
 from django import forms
-from .models import image, top_post, User, tags
+from .models import image, top_post, User, tags, response_post
 
 class PostForm(forms.ModelForm):
     #author = forms.CharField(max_length=128)
@@ -47,3 +47,9 @@ class UserRegistrationForm(forms.ModelForm):
         if cd['password'] != cd['password2']:
             raise forms.ValidationError('Passwords don\'t match.')
         return cd['password2']
+
+class CommentForm(forms.ModelForm):
+
+    class Meta:
+        model = response_post
+        fields = ('text',)

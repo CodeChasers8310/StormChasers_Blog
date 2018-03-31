@@ -72,6 +72,9 @@ and is wrapped around the whole page content, except for the footer in this exam
         </div>
       </div>
       <hr>
+     <!--Testing comments-->
+      <a href="{% url 'post_detail' pk=post.pk %}">Comments: {{ post.comments.count }}</a>
+
       {% endfor %}
 
     <!-- END BLOG ENTRIES -->

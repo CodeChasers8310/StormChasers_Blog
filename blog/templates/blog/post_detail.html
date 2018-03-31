@@ -73,4 +73,18 @@ div.desc {
         {% endfor %}
 
     </div>
+
+<hr>
+
+<a class="btn btn-default" href="{% url 'add_comment_to_post' pk=post.pk %}">Add comment</a>
+{% for comment in top_post.comments.all %}
+    <div class="comment" style="margin: 20px 0px 20px 20px;">
+        <div class="date">{{ comment.created_date }}</div>
+        <strong>{{ comment.author }}</strong>
+        <p>{{ comment.text|linebreaks }}</p>
+    </div>
+{% empty %}
+    <p>No comments here yet :(</p>
+{% endfor %}
+
 {% endblock %}

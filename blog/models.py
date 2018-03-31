@@ -53,6 +53,15 @@ class response_post(models.Model):
     text = models.TextField(blank=True)
     user_id = models.ForeignKey('auth.User', default=None)
     top_post_id = models.ForeignKey('top_post')
+    is_approved = models.BooleanField(default=False)
+    #author =
+
+    def approve(self):
+        self.approved_comment = True
+        self.save()
+
+    def __str__(self):
+        return self.text
 
 class tags(models.Model):
     tag_id = models.AutoField(primary_key=True)

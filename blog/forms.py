@@ -49,7 +49,8 @@ class UserRegistrationForm(forms.ModelForm):
         return cd['password2']
 
 class CommentForm(forms.ModelForm):
-
+    text = forms.CharField(max_length=250, widget=forms.Textarea(attrs={'rows':4, 'cols':50}),
+                           label="")
     class Meta:
         model = response_post
         fields = ('text',)

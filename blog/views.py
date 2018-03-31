@@ -42,6 +42,7 @@ def new_top_post(request):
                                   created_date=timezone.now(),
                                   published_date=timezone.now(),
                                   user_id=request.user,)
+            newTopPost.author = request.user.username
             newTopPost.save()
             # Get object to save with images
             topPostInstance = get_object_or_404(top_post, post_id=newTopPost.post_id)
@@ -60,7 +61,7 @@ def new_top_post(request):
 
             return HttpResponseRedirect(reverse('blog'))
         else:
-            print (tagsForm.errors)#, formset.errors)
+            print (tagsForm.errors)
     else:
         postForm = PostForm()
         formset = ImageFormSet(queryset=dbimage.objects.none())
@@ -70,16 +71,21 @@ def new_top_post(request):
 
 @login_required
 def post_deleted(request, id):
-    print(id)
     post = top_post.objects.get(post_id=id).delete()
     return render(request, 'blog/post_deleted_after.html')
-    # return HttpResponseRedirect(reverse('post_deleted'))#, kwargs={'id':id}))
 
 @login_required
 def post_detail(request, post_id):
     topPost = get_object_or_404(top_post, post_id=post_id)
     images = image.objects.filter(top_post_id=topPost.post_id)
-    return render(request, 'blog/post_detail.html', {'post': topPost, 'images':images})
+    isAuthor = False
+    print(request.user.username)
+    print(topPost.user_id.username)
+    if request.user.username == topPost.user_id.username:
+        isAuthor = True
+    dateNow = timezone.now()
+    return render(request, 'blog/post_detail.html', {'post': topPost, 'images':images,
+                                                     'isAuthor':isAuthor,'dateNow':dateNow})
 
 @login_required
 def delete_image(request, id):
@@ -98,13 +104,14 @@ def post_edit(request, post_id):
         postForm = PostForm(request.POST, prefix='PostForm')
         if postForm.is_valid():
             title = request.POST['PostForm-title']
-            text = request.POST['PostForm-title']
-            newTopPost = top_post(title=title,
-                                  text=text,
-                                  created_date=timezone.now(),
-                                  published_date=timezone.now(),
-                                  user_id=request.user,)
+            text = request.POST['PostForm-text']
+            print(title)
+            print(text)
+            newTopPost = top_post.objects.get(post_id=post_id)
+            newTopPost.title = title
+            newTopPost.text = text
             newTopPost.save()
+            # newTopPost = top_post.objects.get(post_id=post_id)
             return redirect('post_detail', post_id=newTopPost.post_id)
     else:
         form = PostForm(instance=topPost, prefix='PostForm')
@@ -140,7 +147,6 @@ def dashboard(request):
 def locations(request):
     return render(request, 'blog/locations.html')
 
-@login_required
 def blog(request):
     topPosts = top_post.objects.all().order_by('-post_id')
     displayImages = []
@@ -207,15 +213,19 @@ def about_us(request):
 def subscriptions(request):
     return render(request, 'blog/subscriptions.html')
 
-def add_comment_to_post(request, pk):
-    post = get_object_or_404(top_post, pk=pk)
+@login_required
+def add_comment_to_post(request, post_id):
+    post = get_object_or_404(top_post, post_id=post_id)
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
-            comment.post = post
+            comment.top_post_id = post
+            comment.user_id = request.user
+            comment.author = request.user.username
+            comment.is_approved = True
             comment.save()
-            return redirect('post_detail', pk=post.pk)
+            return redirect('post_detail', post_id=post.post_id)
     else:
         form = CommentForm()
     return render(request, 'blog/add_comment_to_post.html', {'form': form})
@@ -274,3 +284,16 @@ def register(request):
     else:
         user_form = UserRegistrationForm()
     return render(request, 'blog/register.html', {'user_form': user_form})
+
+@login_required
+def comment_approve(request, post_id):
+    comment = get_object_or_404(response_post, post_id=post_id)
+    comment.approve()
+    return redirect('post_detail', pk=comment.post.pk)
+
+@login_required
+def comment_remove(request, post_id):
+    comment = get_object_or_404(response_post, post_id=post_id)
+    comment.text = 'COMMENT DELETED'
+    comment.save()
+    return redirect('post_detail', post_id=comment.top_post_id.post_id)

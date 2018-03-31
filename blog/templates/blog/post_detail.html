@@ -25,12 +25,18 @@ div.desc {
     text-align: center;
 }
 
-
+.user_name{
+    font-size:14px;
+    font-weight: bold;
+}
+.comments-list .media{
+    border-bottom: 1px dotted #ccc;
+}
 </style>
 </head>
 
 
-    {% if user.is_authenticated %}
+    {% if isAuthor %}
     <div class="container" style="padding: 4px">
         <a href="{% url 'post_edit' post_id=post.post_id %}">
          <button type="button" class="btn btn-primary btn-block" style="font-size: 18px">Edit Post</button>
@@ -60,17 +66,62 @@ div.desc {
     </div>
   </div>
   <hr>
-
+<div>
+            {% for image in images %}
+<div class="w3-container">
     <div class="post">
-
-        {% for image in images %}
         <div class="gallery">
   <a target="_blank" href="{{ image.image.url }}">
     <img src="{{ image.image.url }}" alt="{{ image.image.name }}" width="300" height="200">
   </a>
 </div>
-
-        {% endfor %}
+    </div>
+</div>
+    <p><br /></p>
+    {% endfor %}
 
     </div>
+<p><br /></p>
+<p><br /></p>
+<p><br /></p>
+<p><br /></p>
+<p><br /></p>
+<p><br /></p>
+<p><br /></p>
+
+
+<div>
+<div class="w3-container">
+            <div class="row">
+                <!--<div class="col-md-8">-->
+                  <div class="page-header">
+                      <a class="btn btn-primary" href="{% url 'add_comment_to_post' post_id=post.post_id %}">Add comment</a>
+                    <h1><small class="pull-right">{{ post.comment.count }}</small> Comments </h1>
+                  </div>
+                   <div class="comments-list">
+                       {% for comment in post.comment.all %}
+                       {% if comment.is_approved %}
+                       <div class="media" style="border-bottom: 1px dotted #ccc;">
+                           <p class="pull-right"><small>{{ comment.created_date|timesince:dateNow }}</small></p>
+                            <a class="media-left" href="#">
+                              <!--<img src="http://lorempixel.com/40/40/people/1/">-->
+                            </a>
+                            <div class="media-body">
+                              <h4 class="media-heading user_name">{{ comment.author }}</h4>
+                              {{ comment.text }}
+                                {% if isAuthor %}
+                                <p><small><a href="{% url 'comment_remove' post_id=comment.post_id %}">Delete</a></small></p>
+                                {% endif %}
+                            </div>
+                          </div>
+                       {% endif %}
+
+                       {% empty %}
+                       <p>No comments here yet :(</p>
+                       {% endfor %}
+                   </div>
+                <!--</div>-->
+            </div>
+        </div>
+</div>
 {% endblock %}

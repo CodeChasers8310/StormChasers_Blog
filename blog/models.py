@@ -45,6 +45,10 @@ class top_post(models.Model):
     published_date = models.DateTimeField(blank=True, null=True)
     text = models.TextField(blank=True)
     user_id = models.ForeignKey('auth.User', default=None)
+    author = models.CharField(max_length=250, default=None)
+
+    def approved_comments(self):
+        return self.comments.filter(is_approved=True)
 
 class response_post(models.Model):
     post_id = models.AutoField(primary_key=True)
@@ -52,7 +56,16 @@ class response_post(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
     text = models.TextField(blank=True)
     user_id = models.ForeignKey('auth.User', default=None)
-    top_post_id = models.ForeignKey('top_post')
+    top_post_id = models.ForeignKey('top_post', related_name='comment')
+    is_approved = models.BooleanField(default=False)
+    author = models.CharField(max_length=250, default=None)
+
+    def approve(self):
+        self.approved_comment = True
+        self.save()
+
+    def __str__(self):
+        return self.text
 
 class tags(models.Model):
     tag_id = models.AutoField(primary_key=True)
@@ -72,3 +85,4 @@ class alerts(models.Model):
 class user_alerts(models.Model):
     user_id = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     alert_id = models.ForeignKey(alerts, on_delete=models.CASCADE)
+

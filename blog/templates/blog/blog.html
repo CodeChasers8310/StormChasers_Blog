@@ -2,7 +2,6 @@
 
 {% block content %}
 
-<!DOCTYPE html>
 <html>
 <title>W3.CSS Template</title>
 <meta charset="UTF-8">
@@ -34,7 +33,7 @@ header {background-image: url("/static/images/blog_top.jpg");
 
 <!-- w3-content defines a container for fixed size centered content,
 and is wrapped around the whole page content, except for the footer in this example -->
-<div class="w3-content" style="max-width:1600px;" align="center">
+<div class="w3-content" style="max-width:1600px;" align="">
 
   <!-- Header -->
   <header class="w3-container w3-center w3-padding-48 w3-white">
@@ -55,11 +54,12 @@ and is wrapped around the whole page content, except for the footer in this exam
       <div class="w3-container w3-white w3-margin w3-padding-large w3-center">
         <a href="{% url 'post_detail' post_id=post.post_id %}">
           <div class="w3-center">
-          <h3>{{ post.title }}</h3>
+          <h2>{{ post.title }}</h2>
         </div>
           <div class="w3-center">
-          <h5>{{ post.author }}<span class="w3-opacity">{{ post.published_date }}</span></h5>
-        </div>
+          <h5>{{ post.author }}</h5>
+            <h5><span class="w3-opacity">{{ post.published_date }}</span></h5>
+          </div>
         </a>
         <!-- This is how I am limiting the main blog page images to one image -->
         {% for blogImages in post.image_set.all|slice:":1" %}
@@ -72,6 +72,10 @@ and is wrapped around the whole page content, except for the footer in this exam
         </div>
       </div>
       <hr>
+     <!--Testing comments-->
+      <a href="{% url 'post_detail' post_id=post.post_id %}">
+        <h5 style="font-family: Arial, Helvetica, sans-serif;">Comments: {{ post.comment.count }}</h5></a>
+
       {% endfor %}
 
     <!-- END BLOG ENTRIES -->

@@ -31,4 +31,7 @@ urlpatterns = [
     # url(r'^post/new/blog/blog.html', views.blog, name='blog'),
     url(r'^register/$', views.register, name='register'),
     url(r'^pwd_recover/$', views.pwd_recover, name='pwd_recover'),
+    url(r'^post/(?P<post_id>\d+)/comment/$', views.add_comment_to_post, name='add_comment_to_post'),
+    url(r'^comment/(?P<post_id>\d+)/approve/$', views.comment_approve, name='comment_approve'),
+    url(r'^comment/(?P<post_id>\d+)/remove/$', views.comment_remove, name='comment_remove'),
 ]

@@ -1,0 +1,36 @@
+body{background-color: aliceblue;}
+
+#main {background-color: #cccccc;
+
+  width: 800px;
+    height: auto;
+
+}
+#banner {backround-color: #cfcfcf;
+        width: 100%;
+        height: 90px;
+
+}
+.row1{width: 800px;
+    height: 400px;
+    backround-color: #cfcfcf;
+
+}
+.row2{width: 800px;
+    height: 400px;
+    backround-color: #cfcfcf;
+
+}
+.col1{width: 400px;
+    float: left;
+    backround-color: #cfcfcf;
+
+}
+.col2{width: 400px;
+    float: right;
+    backround-color: #cfcfcf;
+
+}
+p {text-align: justify;
+    padding: 0 25px 0 25px;
+}

@@ -69,7 +69,7 @@ class response_post(models.Model):
 
 class tags(models.Model):
     tag_id = models.AutoField(primary_key=True)
-    tag = models.CharField(max_length=25)
+    tag = models.CharField(max_length=500)
     top_post_id = models.ForeignKey('top_post', on_delete=models.CASCADE, blank=True, default=None)
     #response_post_id = models.ForeignKey('response_post', on_delete=models.CASCADE, blank=True, default=None)
 

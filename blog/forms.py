@@ -4,7 +4,7 @@ from .models import image, top_post, User, tags, response_post
 class PostForm(forms.ModelForm):
     #author = forms.CharField(max_length=128)
     title = forms.CharField(max_length=128)
-    text = forms.CharField(max_length=500, widget=forms.Textarea(attrs={'rows':7, 'cols':77}))
+    text = forms.CharField(max_length=4000, widget=forms.Textarea(attrs={'rows':7, 'cols':77}))
 
     class Meta:
         model = top_post
@@ -17,7 +17,7 @@ class ImageForm(forms.ModelForm):
         fields = ('image',)
 
 class TagForm(forms.ModelForm):
-    tag = forms.CharField(max_length=150, widget=forms.Textarea(attrs={'rows':2, 'cols':45}))
+    tag = forms.CharField(max_length=500, widget=forms.Textarea(attrs={'rows':2, 'cols':45}))
 
     class Meta:
         model = tags

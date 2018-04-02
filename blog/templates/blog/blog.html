@@ -65,10 +65,10 @@ and is wrapped around the whole page content, except for the footer in this exam
         {% for blogImages in post.image_set.all|slice:":1" %}
         <div></div>
         <div class="w3-justify">
-          <img src="{{ blogImages.image.url }}" alt="{{ blogImages.image.name }}" style="width:100%" class="w3-padding-16">
+          <img  src="{{ blogImages.image.url }}" alt="{{ blogImages.image.name }}" style="width:100%" class="w3-padding-16">
 
           {% endfor %}
-          <p>{{ post.text }}</p>
+          <p>{{ post.text|truncatechars:500 }}</p>
         </div>
       </div>
       <hr>

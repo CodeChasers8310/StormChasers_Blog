@@ -6,7 +6,7 @@ from .models import tags as modelsTag
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.forms import modelformset_factory
-#from .forms import ImageForm, PostForm
+# from .forms import ImageForm, PostForm
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render_to_response
@@ -19,11 +19,13 @@ from .forms import PostForm, ImageForm, TagForm
 from random import randrange
 from django.contrib import messages
 from .forms import *
+import json
+from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator
+from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator1
 
 
 @login_required
 def new_top_post(request):
-
     ImageFormSet = modelformset_factory(dbimage,
                                         form=ImageForm, extra=10)
 
@@ -41,7 +43,7 @@ def new_top_post(request):
                                   text=text,
                                   created_date=timezone.now(),
                                   published_date=timezone.now(),
-                                  user_id=request.user,)
+                                  user_id=request.user, )
             newTopPost.author = request.user.username
             newTopPost.save()
             # Get object to save with images
@@ -49,7 +51,7 @@ def new_top_post(request):
             for form in formset.cleaned_data:
                 try:
                     image = form['image']
-                    photo = dbimage(image = image, top_post_id=topPostInstance)
+                    photo = dbimage(image=image, top_post_id=topPostInstance)
                     photo.save()
                 except KeyError:
                     pass
@@ -61,18 +63,20 @@ def new_top_post(request):
 
             return HttpResponseRedirect(reverse('blog'))
         else:
-            print (tagsForm.errors)
+            print(tagsForm.errors)
     else:
         postForm = PostForm()
         formset = ImageFormSet(queryset=dbimage.objects.none())
         tagForm = TagForm()
     return render(request, 'blog/new_post.html',
-                  {'postForm': postForm, 'formset': formset, 'tagForm':TagForm})
+                  {'postForm': postForm, 'formset': formset, 'tagForm': TagForm})
+
 
 @login_required
 def post_deleted(request, id):
     post = top_post.objects.get(post_id=id).delete()
     return render(request, 'blog/post_deleted_after.html')
+
 
 @login_required
 def post_detail(request, post_id):
@@ -84,8 +88,9 @@ def post_detail(request, post_id):
     if request.user.username == topPost.user_id.username:
         isAuthor = True
     dateNow = timezone.now()
-    return render(request, 'blog/post_detail.html', {'post': topPost, 'images':images,
-                                                     'isAuthor':isAuthor,'dateNow':dateNow})
+    return render(request, 'blog/post_detail.html', {'post': topPost, 'images': images,
+                                                     'isAuthor': isAuthor, 'dateNow': dateNow})
+
 
 @login_required
 def delete_image(request, id):
@@ -93,7 +98,8 @@ def delete_image(request, id):
     postId = image.objects.get(id=id)
     postId = postId.top_post_id.post_id
     images = image.objects.get(id=id).delete()
-    return HttpResponseRedirect(reverse('post_edit', kwargs={'post_id':postId}))
+    return HttpResponseRedirect(reverse('post_edit', kwargs={'post_id': postId}))
+
 
 @login_required
 def post_edit(request, post_id):
@@ -115,8 +121,9 @@ def post_edit(request, post_id):
             return redirect('post_detail', post_id=newTopPost.post_id)
     else:
         form = PostForm(instance=topPost, prefix='PostForm')
-        #images = ImageForm()
-        return render(request, 'blog/post_edit.html', {'form': form, 'images':images})
+        # images = ImageForm()
+        return render(request, 'blog/post_edit.html', {'form': form, 'images': images})
+
 
 '''Uses old django girls post object
 @login_required
@@ -139,19 +146,22 @@ def post_edit(request, pk):
 def home(request):
     return render(request, 'blog/home.html')
 
+
 @login_required
 def dashboard(request):
     return render(request, 'blog/dashboard.html')
+
 
 @login_required
 def locations(request):
     return render(request, 'blog/locations.html')
 
+
 def blog(request):
     topPosts = top_post.objects.all().order_by('-post_id')
     displayImages = []
     # Get some default image if posts don't have an image
-    defaultImage = None#image.objects.get(image='blogImages/2018/03/20/instructor.jpg')
+    defaultImage = None  # image.objects.get(image='blogImages/2018/03/20/instructor.jpg')
     for post in topPosts:
         allBlogImages = image.objects.filter(top_post_id=post.post_id)
         try:
@@ -159,10 +169,11 @@ def blog(request):
         except:
             randomImage = defaultImage
         displayImages.append(randomImage)
-    return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
+    return render(request, 'blog/blog.html', {'topPosts': topPosts, 'blogImages': displayImages})
+
 
 @login_required
-def blog_search(request):#, formTags):
+def blog_search(request):  # , formTags):
     if request.method == 'GET':
         # SearchForm
         newSearch = request.GET['search']
@@ -188,30 +199,70 @@ def blog_search(request):#, formTags):
             displayImages.append(randomImage)
         # Display search error if no posts are found
         if len(topPosts) > 0:
-            return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
+            return render(request, 'blog/blog.html', {'topPosts': topPosts, 'blogImages': displayImages})
         else:
             topPosts = []
-            errorPost = top_post(post_id=999999999, published_date=timezone.now(), title="No Results!", text='Separate Search Terms by a Space', user_id=request.user)
+            errorPost = top_post(post_id=999999999, published_date=timezone.now(), title="No Results!",
+                                 text='Separate Search Terms by a Space', user_id=request.user)
             errorPost.author = 'Oh No'
             topPosts.append(errorPost)
 
-            return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
+            return render(request, 'blog/blog.html', {'topPosts': topPosts, 'blogImages': displayImages})
 
     else:
         topPosts = None
         displayImages = None
-        return render(request, 'blog/blog.html', {'topPosts':topPosts, 'blogImages':displayImages})
+        return render(request, 'blog/blog.html', {'topPosts': topPosts, 'blogImages': displayImages})
+
 
 @login_required
 def my_profile(request):
     return render(request, 'blog/my_profile.html')
 
+
 def about_us(request):
-    return render(request, 'blog/about_us.html')
+    language_translator = LanguageTranslator(
+        username='90cbe197-3db2-45e1-8d4b-0a95444275f0',
+        password='jxPHFLuHnTra')
+
+    translation = language_translator.translate(
+        text=['Join us in the quest to witness a tornado close and personal.We are the StormChasers.'],
+        source='en',
+        target='fr')
+
+    translatedtext = json.dumps(translation, indent=2, ensure_ascii=False)
+
+    t = json.loads(translatedtext)
+
+    translation = t['translations'][0]['translation']
+
+    return render(request, 'blog/about_us.html', {'translations': translation})
+
+
+# def about_us1(request):
+#     language_translator1 = LanguageTranslator1(
+#         username='0a1ec0ad-b7d8-4b8c-a6cc-d368be0c96ac',
+#         password='I6lRukwzjTo4')
+#
+#     translation1 = language_translator1.translate(
+#         text=['Join us in the quest to witness a tornado close and personal.We are the StormChasers.'],
+#         source='en',
+#         target='es')
+#
+#     translatedtext1 = json.dumps(translation1, indent=2, ensure_ascii=False)
+#
+#     t1 = json.loads(translatedtext1)
+#
+#     translationes = t1['translations'][0]['translation']
+#
+#     print(translationes)
+#
+#     return render(request, 'blog/about_us.html', {'translationsp': translationes})
 
 @login_required
 def subscriptions(request):
     return render(request, 'blog/subscriptions.html')
+
 
 @login_required
 def add_comment_to_post(request, post_id):
@@ -229,6 +280,7 @@ def add_comment_to_post(request, post_id):
     else:
         form = CommentForm()
     return render(request, 'blog/add_comment_to_post.html', {'form': form})
+
 
 '''Uses old django girls post object
 @login_required
@@ -260,9 +312,11 @@ def post_new(request):
     return render(request, 'blog/post_edit.html', {'form': form})
 '''
 
+
 def pwd_recover(request):
-   return render(request, 'blog/pwd_recover.html',
-                 {'xxx': pwd_recover})
+    return render(request, 'blog/pwd_recover.html',
+                  {'xxx': pwd_recover})
+
 
 def register(request):
     if request.method == 'POST':
@@ -278,18 +332,20 @@ def register(request):
             # Create the user profile
             profile = Profile.objects.create(user=new_user)
             return render(request, 'blog/my_profile.html', {'profile': profile, 'new_user': new_user})
-           # return render(request,
-                        #  'blog/register_done.html',
-                          #{'new_user': new_user})
+        # return render(request,
+        #  'blog/register_done.html',
+        # {'new_user': new_user})
     else:
         user_form = UserRegistrationForm()
     return render(request, 'blog/register.html', {'user_form': user_form})
+
 
 @login_required
 def comment_approve(request, post_id):
     comment = get_object_or_404(response_post, post_id=post_id)
     comment.approve()
     return redirect('post_detail', pk=comment.post.pk)
+
 
 @login_required
 def comment_remove(request, post_id):

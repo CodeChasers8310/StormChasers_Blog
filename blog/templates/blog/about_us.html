@@ -1,15 +1,41 @@
 {% extends 'blog/base.html' %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <h1>About Us</h1>
-</head>
-<body>
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Title</title>
+            <h1>About Us</h1>
+        </head>
 
-</body>
-</html>
+        <style>
+            body {font-family: "Lato", sans-serif}
+
+        </style>
+
+        <body>
+            <div class="container">
+                <p>
+                    <h4><i> Join us in the quest to witness a tornado close and personal.We are the StormChasers.</i></h4>
+                <p>
+
+                <span style="background-color:yellow">
+                    <i>
+                        <b><u> French  Translation: </u></b> <h4 ><i> {{ translations }} </i></h4>
+                    </i>
+                </span>
+
+
+{#                </p>#}
+{#                    <h4 ><i> {{ translations }} </i></h4>#}
+{#                </p>#}
+            </div>
+        </body>
+    </html>
 {% endblock %}
+
+
+
+
+

@@ -158,7 +158,26 @@
 </head>
 <body>
 
+<div><h3>We Use Your Profile ZIP Code by default</h3></div>
+<div><h5>Enter either Lat and Long, or ZIP</h5></div>
+<form id=search_form method="get" action="{% url 'get_forecast' %}">
+<div class="form-group" style="padding: 10px;">
+<div>
+    <input type="text" size="15"  name="lat"  placeholder="Lat">
+</div>
+<div style="padding: 10px;">
+    <input type="text" size="15"  name="lon"  placeholder="Long">
+</div>
+<div style="padding: 10px;">
+    <input type="text" size="15"  name="zip"  placeholder="ZIP">
+</div>
+    <button type="submit" class="btn btn-primary">Alter ZIP</button>
+</div>
+
+</form>
 <div id="map-canvas"></div>
+<div><h1>5 Day Weather Forecast</h1></div>
+
 
 </body>
 </html>

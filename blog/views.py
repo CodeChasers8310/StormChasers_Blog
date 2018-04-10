@@ -22,7 +22,8 @@ from .forms import *
 import json
 from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator
 from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator1
-
+import requests as Requests
+import json as Json
 
 @login_required
 def new_top_post(request):
@@ -71,12 +72,138 @@ def new_top_post(request):
     return render(request, 'blog/new_post.html',
                   {'postForm': postForm, 'formset': formset, 'tagForm': TagForm})
 
+@login_required
+def getForecast(request):
+
+    lat = request.GET['lat']
+    lon = request.GET['lon']
+    zip = request.GET['zip']
+
+    success = False
+    json = {}
+
+    if lat == '' and lon == '' and zip == '':
+        pass
+    elif lat != '' and lon != '':
+        #forecast = http://api.openweathermap.org/data/2.5/forecast?zip=68114&APPID=431a44405aef953371bcbe245588e0c7
+        r = Requests.get('http://api.openweathermap.org/data/2.5/forecast?lat=' + str(lat) + '&lon=' + str(lon) + '&APPID=431a44405aef953371bcbe245588e0c7')
+        if r.status_code == 200:
+            success = True
+            json = r.json()
+    elif zip != '':
+        #forecast = http://api.openweathermap.org/data/2.5/forecast?lat=41.3&lon=95.9&APPID=431a44405aef953371bcbe245588e0c7
+        r = Requests.get('http://api.openweathermap.org/data/2.5/forecast?zip=' + str(zip) + '&APPID=431a44405aef953371bcbe245588e0c7')
+        if r.status_code == 200:
+            success = True
+            json = r.json()
+    else:
+        pass
+
+    #for key, value in json.items():
+    #    print(str(key) + '   ' + str(value))
+
+    # print('+1 Day')
+    # print((json['list']))
+
+    print('+1 Day 3AM')
+    print((json['list'][0]))
+    print('+1 Day 6AM')
+    print((json['list'][1]))
+    print('+1 Day 9AM')
+    print((json['list'][2]))
+    print('+1 Day 12PM')
+    print((json['list'][3]))
+    print('+1 Day 3PM')
+    print((json['list'][4]))
+    print('+1 Day 6PM')
+    print((json['list'][5]))
+    print('+1 Day 9PM')
+    print((json['list'][6]))
+    print()
+    print()
+    print('+2 Day 3AM')
+    print((json['list'][7]))
+    print('+2 Day 6AM')
+    print((json['list'][8]))
+    print('+2 Day 9AM')
+    print((json['list'][9]))
+    print('+2 Day 12PM')
+    print((json['list'][10]))
+    print('+2 Day 3PM')
+    print((json['list'][11]))
+    print('+2 Day 6PM')
+    print((json['list'][12]))
+    print('+2 Day 9PM')
+    print((json['list'][13]))
+    print()
+    print()
+    print('+3 Day 3AM')
+    print((json['list'][14]))
+    print('+3 Day 6AM')
+    print((json['list'][15]))
+    print('+3 Day 9AM')
+    print((json['list'][16]))
+    print('+3 Day 12PM')
+    print((json['list'][17]))
+    print('+3 Day 3PM')
+    print((json['list'][18]))
+    print('+3 Day 6PM')
+    print((json['list'][19]))
+    print('+3 Day 9PM')
+    print((json['list'][20]))
+    print()
+    print()
+    print('+4 Day 3AM')
+    print((json['list'][21]))
+    print('+4 Day 6AM')
+    print((json['list'][22]))
+    print('+4 Day 9AM')
+    print((json['list'][23]))
+    print('+4 Day 12PM')
+    print((json['list'][24]))
+    print('+4 Day 3PM')
+    print((json['list'][25]))
+    print('+4 Day 6PM')
+    print((json['list'][26]))
+    print('+4 Day 9PM')
+    print((json['list'][27]))
+    print()
+    print()
+    print('+5 Day 3AM')
+    print((json['list'][28]))
+    print('+5 Day 6AM')
+    print((json['list'][29]))
+    print('+5 Day 9AM')
+    print((json['list'][30]))
+    print('+5 Day 12PM')
+    print((json['list'][31]))
+    print('+5 Day 3PM')
+    print((json['list'][32]))
+    print('+5 Day 6PM')
+    print((json['list'][33]))
+    print('+5 Day 9PM')
+    print((json['list'][34]))
+
+
+    '''
+    print('+3 Day')
+    print()
+    print('+4 Day')
+    print()
+    print('+5 Day')
+    print()
+    
+    '''
+    #j = Json.loads(json)
+    #json['']
+    return render(request, 'blog/dashboard.html', {'lat':lat, 'lon':lon,
+                                                   'zip':zip, 'success':success})
+    #return render(request, 'blog/blog.html', {'topPosts': topPosts, 'blogImages': displayImages})
 
 @login_required
 def post_deleted(request, id):
     post = top_post.objects.get(post_id=id).delete()
     return render(request, 'blog/post_deleted_after.html')
-
 
 @login_required
 def post_detail(request, post_id):
@@ -111,8 +238,6 @@ def post_edit(request, post_id):
         if postForm.is_valid():
             title = request.POST['PostForm-title']
             text = request.POST['PostForm-text']
-            print(title)
-            print(text)
             newTopPost = top_post.objects.get(post_id=post_id)
             newTopPost.title = title
             newTopPost.text = text

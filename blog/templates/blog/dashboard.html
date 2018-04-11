@@ -1,5 +1,7 @@
 {% extends 'blog/base.html' %}
 
+{% load custom_filters %}
+
 {% block content %}
 <html lang="en">
 <head>
@@ -187,20 +189,15 @@
     </tr>
   </thead>
   <tbody>
-    {% for times, avgTemps, maxTemps, minTemps, pressures, clouds, windSpeed, windDirection, weatherMains, weatherDescs in displayForecast %} 
-    <tr>
-      <td>{{ times.0 }}</td>
-      <td>{{ avgTemps.0 }}</td>
-      <td>{{ maxTemps.0 }}</td>
-      <td>{{ minTemps.0 }}</td>
-      <td>{{ pressures.0 }}</td>
-      <td>{{ clouds.0 }}</td>
-      <td>{{ windSpeed.0 }}</td>
-      <td>{{ windDirection.0 }}</td>
-      <td>{{ weatherMains.0 }}</td>
-      <td>{{ weatherDescs.0 }}</td>
-    </tr> 
-      {% endfor %}
+  
+  {% for row in displayForecast|columns:10 %}
+ <tr>
+    {% for item in row %}
+        <td>{{ item }}</td>
+    {% endfor %}
+ </tr>
+{% endfor %}
+
   </tbody>
 </table>
 </body>

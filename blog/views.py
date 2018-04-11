@@ -105,7 +105,7 @@ def getForecast(request):
     
     
     headers = ['Time (UTC)', 'Avg Temp', 'Max Temp', 'Min Temp', 'Pressure', 'Cloudiness', 'Wind Speed', 'Wind Direction', 'Weather Main', 'Weather Descriptions']
-    headers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+    #headers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
 
     times = []
     avgTemps = []
@@ -139,17 +139,23 @@ def getForecast(request):
     print()
     print('+5 Day')
     print()
-    
     '''
     
-    displayForecast = (displayForecast)
+    displayForecast2 = []
+    for pred in displayForecast:
+        displayForecast2 += pred
+    
+    
+    displayForecast = [j for i in zip(displayForecast) for j in i]    
+    #displayForecast = zip(displayForecast)
     print(displayForecast)
     #j = Json.loads(json)
     #json['']
     return render(request, 'blog/dashboard.html', {'lat':lat, 'lon':lon,
                                                    'zip':zip, 'success':success, 
-                                                   'displayForecast':displayForecast,
-                                                    'headers':headers})
+                                                    'displayForecast':displayForecast2,
+                                                    'headers':headers,
+                                                    })
                                                     
 @login_required
 def post_deleted(request, id):

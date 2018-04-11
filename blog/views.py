@@ -20,8 +20,8 @@ from random import randrange
 from django.contrib import messages
 from .forms import *
 import json
-from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator
-from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator1
+#from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator
+#from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator1
 import requests as Requests
 import json as Json
 
@@ -77,12 +77,12 @@ def getForecast(request):
 
     lat = request.GET['lat']
     lon = request.GET['lon']
-    zip = request.GET['zip']
+    ZIP = request.GET['zip']
 
     success = False
     json = {}
 
-    if lat == '' and lon == '' and zip == '':
+    if lat == '' and lon == '' and ZIP == '':
         pass
     elif lat != '' and lon != '':
         #forecast = http://api.openweathermap.org/data/2.5/forecast?zip=68114&APPID=431a44405aef953371bcbe245588e0c7
@@ -90,9 +90,9 @@ def getForecast(request):
         if r.status_code == 200:
             success = True
             json = r.json()
-    elif zip != '':
+    elif ZIP != '':
         #forecast = http://api.openweathermap.org/data/2.5/forecast?lat=41.3&lon=95.9&APPID=431a44405aef953371bcbe245588e0c7
-        r = Requests.get('http://api.openweathermap.org/data/2.5/forecast?zip=' + str(zip) + '&APPID=431a44405aef953371bcbe245588e0c7')
+        r = Requests.get('http://api.openweathermap.org/data/2.5/forecast?zip=' + str(ZIP) + '&APPID=431a44405aef953371bcbe245588e0c7')
         if r.status_code == 200:
             success = True
             json = r.json()
@@ -102,88 +102,35 @@ def getForecast(request):
     #for key, value in json.items():
     #    print(str(key) + '   ' + str(value))
 
-    # print('+1 Day')
-    # print((json['list']))
+    
+    
+    headers = ['Time (UTC)', 'Avg Temp', 'Max Temp', 'Min Temp', 'Pressure', 'Cloudiness', 'Wind Speed', 'Wind Direction', 'Weather Main', 'Weather Descriptions']
+    headers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
 
-    print('+1 Day 3AM')
-    print((json['list'][0]))
-    print('+1 Day 6AM')
-    print((json['list'][1]))
-    print('+1 Day 9AM')
-    print((json['list'][2]))
-    print('+1 Day 12PM')
-    print((json['list'][3]))
-    print('+1 Day 3PM')
-    print((json['list'][4]))
-    print('+1 Day 6PM')
-    print((json['list'][5]))
-    print('+1 Day 9PM')
-    print((json['list'][6]))
-    print()
-    print()
-    print('+2 Day 3AM')
-    print((json['list'][7]))
-    print('+2 Day 6AM')
-    print((json['list'][8]))
-    print('+2 Day 9AM')
-    print((json['list'][9]))
-    print('+2 Day 12PM')
-    print((json['list'][10]))
-    print('+2 Day 3PM')
-    print((json['list'][11]))
-    print('+2 Day 6PM')
-    print((json['list'][12]))
-    print('+2 Day 9PM')
-    print((json['list'][13]))
-    print()
-    print()
-    print('+3 Day 3AM')
-    print((json['list'][14]))
-    print('+3 Day 6AM')
-    print((json['list'][15]))
-    print('+3 Day 9AM')
-    print((json['list'][16]))
-    print('+3 Day 12PM')
-    print((json['list'][17]))
-    print('+3 Day 3PM')
-    print((json['list'][18]))
-    print('+3 Day 6PM')
-    print((json['list'][19]))
-    print('+3 Day 9PM')
-    print((json['list'][20]))
-    print()
-    print()
-    print('+4 Day 3AM')
-    print((json['list'][21]))
-    print('+4 Day 6AM')
-    print((json['list'][22]))
-    print('+4 Day 9AM')
-    print((json['list'][23]))
-    print('+4 Day 12PM')
-    print((json['list'][24]))
-    print('+4 Day 3PM')
-    print((json['list'][25]))
-    print('+4 Day 6PM')
-    print((json['list'][26]))
-    print('+4 Day 9PM')
-    print((json['list'][27]))
-    print()
-    print()
-    print('+5 Day 3AM')
-    print((json['list'][28]))
-    print('+5 Day 6AM')
-    print((json['list'][29]))
-    print('+5 Day 9AM')
-    print((json['list'][30]))
-    print('+5 Day 12PM')
-    print((json['list'][31]))
-    print('+5 Day 3PM')
-    print((json['list'][32]))
-    print('+5 Day 6PM')
-    print((json['list'][33]))
-    print('+5 Day 9PM')
-    print((json['list'][34]))
-
+    times = []
+    avgTemps = []
+    maxTemps = []
+    minTemps = []
+    pressures = []
+    clouds = []
+    windSpeed = [] 
+    windDirection = [] 
+    weatherMains = []
+    weatherDescs = []
+    displayForecast = [times, avgTemps,maxTemps, minTemps, pressures, 
+                       clouds, windSpeed, windDirection, weatherMains, weatherDescs,]
+        
+    for item in json['list']:
+        
+        times.append(item['dt_txt'][:16])
+        avgTemps.append(item['main']['temp'])
+        maxTemps.append(item['main']['temp_max'])
+        minTemps.append(item['main']['temp_min'])
+        pressures.append(item['main']['pressure'])
+        windSpeed.append(item['wind']['speed'])
+        windDirection.append(item['wind']['deg'])
+        weatherMains.append(item['weather'][0]['main'])
+        weatherDescs.append(item['weather'][0]['description'])
 
     '''
     print('+3 Day')
@@ -194,12 +141,16 @@ def getForecast(request):
     print()
     
     '''
+    
+    displayForecast = (displayForecast)
+    print(displayForecast)
     #j = Json.loads(json)
     #json['']
     return render(request, 'blog/dashboard.html', {'lat':lat, 'lon':lon,
-                                                   'zip':zip, 'success':success})
-    #return render(request, 'blog/blog.html', {'topPosts': topPosts, 'blogImages': displayImages})
-
+                                                   'zip':zip, 'success':success, 
+                                                   'displayForecast':displayForecast,
+                                                    'headers':headers})
+                                                    
 @login_required
 def post_deleted(request, id):
     post = top_post.objects.get(post_id=id).delete()

@@ -11,6 +11,8 @@ urlpatterns = [
     url(r'^blog/$', views.blog, name='blog'),
     # url(r'^blog_search/(?P<formTags>\d+)/$', views.blog_search, name='blog_search'),
     url(r'^blog_search/(?P<formTags>\w+)/$', views.blog_search, name='blog_search'),
+    #url(r'^get_forecast/(?P<lat>\w+)(?P<lon>\w+)(?P<zip>\w+)/$', views.getForecast, name='get_forecast'),
+    url(r'^get_forecast/$', views.getForecast, name='get_forecast'),
     url(r'^blog_search/$', views.blog_search, name='blog_search'),
     url(r'^my_profile/$', views.my_profile, name='my_profile'),
     url(r'^about_us/$', views.about_us, name='about_us'),
@@ -34,4 +36,5 @@ urlpatterns = [
     url(r'^post/(?P<post_id>\d+)/comment/$', views.add_comment_to_post, name='add_comment_to_post'),
     url(r'^comment/(?P<post_id>\d+)/approve/$', views.comment_approve, name='comment_approve'),
     url(r'^comment/(?P<post_id>\d+)/remove/$', views.comment_remove, name='comment_remove'),
+
 ]

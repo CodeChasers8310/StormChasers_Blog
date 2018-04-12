@@ -324,6 +324,7 @@ def about_us(request):
     return render(request, 'blog/about_us.html', {'translations': translation})
 
 
+
 # def about_us1(request):
 #     language_translator1 = LanguageTranslator1(
 #         username='0a1ec0ad-b7d8-4b8c-a6cc-d368be0c96ac',

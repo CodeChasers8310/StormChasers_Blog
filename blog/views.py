@@ -20,8 +20,8 @@ from random import randrange
 from django.contrib import messages
 from .forms import *
 import json
-#from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator
-#from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator1
+from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator
+from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator1
 import requests as Requests
 import json as Json
 from geopy.geocoders import Nominatim

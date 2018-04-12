@@ -20,8 +20,8 @@ from random import randrange
 from django.contrib import messages
 from .forms import *
 import json
-#from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator
-#from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator1
+from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator
+from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator1
 import requests as Requests
 import json as Json
 from geopy.geocoders import Nominatim
@@ -304,7 +304,7 @@ def blog_search(request):  # , formTags):
 def my_profile(request):
     return render(request, 'blog/my_profile.html')
 
-'''
+
 def about_us(request):
     language_translator = LanguageTranslator(
         username='90cbe197-3db2-45e1-8d4b-0a95444275f0',
@@ -322,25 +322,7 @@ def about_us(request):
     translation = t['translations'][0]['translation']
 
     return render(request, 'blog/about_us.html', {'translations': translation})
-'''
 
-def about_us(request):
-    # language_translator = LanguageTranslator(
-    #     username='90cbe197-3db2-45e1-8d4b-0a95444275f0',
-    #     password='jxPHFLuHnTra')
-    #
-    # translation = language_translator.translate(
-    #     text=['Join us in the quest to witness a tornado close and personal.We are the StormChasers.'],
-    #     source='en',
-    #     target='fr')
-    #
-    # translatedtext = json.dumps(translation, indent=2, ensure_ascii=False)
-    #
-    # t = json.loads(translatedtext)
-    #
-    # translation = t['translations'][0]['translation']
-    translation = []
-    return render(request, 'blog/about_us.html', {'translations': translation})
 
 
 # def about_us1(request):

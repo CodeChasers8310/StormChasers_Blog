@@ -1,5 +1,7 @@
 {% extends 'blog/base.html' %}
 
+{% load custom_filters %}
+
 {% block content %}
 <html lang="en">
 <head>
@@ -20,6 +22,12 @@
     .gm-style-iw {
       text-align: center;
     }
+    .table td.fit, 
+.table th.fit {
+    white-space: nowrap;
+    width: 1%;
+}
+    
   </style>
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?Client=AIzaSyAC_aXhhsuUdPkBMFuKWNVOitZaTkRuVO4">
 </script>
@@ -32,7 +40,8 @@
   function initialize() {
     var mapOptions = {
       zoom: 9,
-      center: new google.maps.LatLng(41.2,-96)
+      center: new google.maps.LatLng({{ lat }}, {{ lon }})
+
     };
     map = new google.maps.Map(document.getElementById('map-canvas'),
         mapOptions);
@@ -160,6 +169,9 @@
 
 <div><h3>We Use Your Profile ZIP Code by default</h3></div>
 <div><h5>Enter either Lat and Long, or ZIP</h5></div>
+{% if openFailure %}
+<div><h3 style="background-color: orange;">Search Failed - please try again</h3></div>
+{% endif %}
 <form id=search_form method="get" action="{% url 'get_forecast' %}">
 <div class="form-group" style="padding: 10px;">
 <div>
@@ -175,8 +187,49 @@
 </div>
 
 </form>
+
+<div><h1>Weather Map</h1></div>
 <div id="map-canvas"></div>
 <div><h1>5 Day Weather Forecast</h1></div>
+<table class="table table-bordered table-hover table-striped" style="white-space: nowrap; width: 1%;">
+  <thead style="background-color: #4289ed; color: white;">
+    <tr>
+    {% for header in headers %}
+      <th scope="col">{{ header }}</th>
+    {% endfor %}    
+    </tr>
+  </thead>
+  <tbody>
+  
+  {% for row in displayForecast|columns:10 %}
+ <tr>
+    {% for item in row %}
+        <td>{{ item }}</td>
+    {% endfor %}
+ </tr>
+{% endfor %}
+
+  </tbody>
+</table>
+
+<div><h1>Weather Alerts</h1></div>
+
+{% for alert in alertsForDisplay %}
+<!-- <span class="border border-dark"> -->
+<div class="container-fluid" style="border-style: solid; border-color: #4289ed; padding: 10px;">
+<div class="panel panel-default"><h4>{{ alert.0 }}</h4></div>
+<div>
+<dl>
+<li>Alert Issued: {{ alert.1 }}</li>
+<li>Alert Expires: {{ alert.2 }}</li>
+</dl>
+</div>
+<p class="text-justify">
+  {{ alert.3 }}
+</p>
+</div>
+<!-- </span> -->
+{% endfor %}
 
 <div class="container">
   <table class="table table-condensed">
@@ -215,3 +268,5 @@
   </table>
 </div>
 {% endblock %}
+
+

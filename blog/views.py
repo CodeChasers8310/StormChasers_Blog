@@ -20,10 +20,11 @@ from random import randrange
 from django.contrib import messages
 from .forms import *
 import json
-from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator
-from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator1
+#from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator
+#from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator1
 import requests as Requests
 import json as Json
+from geopy.geocoders import Nominatim
 
 @login_required
 def new_top_post(request):
@@ -77,136 +78,107 @@ def getForecast(request):
 
     lat = request.GET['lat']
     lon = request.GET['lon']
-    zip = request.GET['zip']
+    ZIP = request.GET['zip']
 
-    success = False
+    openFailure = True
+    wunderFailure = True
     json = {}
 
-    if lat == '' and lon == '' and zip == '':
-        pass
-    elif lat != '' and lon != '':
-        #forecast = http://api.openweathermap.org/data/2.5/forecast?zip=68114&APPID=431a44405aef953371bcbe245588e0c7
+    # Gets data for each api based on input
+    # The resulting lat long is pass to the javascript google map on the dashboard    
+    if lat != '' and lon != '':
         r = Requests.get('http://api.openweathermap.org/data/2.5/forecast?lat=' + str(lat) + '&lon=' + str(lon) + '&APPID=431a44405aef953371bcbe245588e0c7')
+        wund = Requests.get('http://api.wunderground.com/api/f807def6b862d1f5/alerts/q/' + str(lat) + ',' + str(lon) + '.json')
+        #wund = Requests.get('http://api.wunderground.com/api/f807def6b862d1f5/alerts/q/35.691,105.561.json')
         if r.status_code == 200:
-            success = True
+            openFailure = False
             json = r.json()
-    elif zip != '':
-        #forecast = http://api.openweathermap.org/data/2.5/forecast?lat=41.3&lon=95.9&APPID=431a44405aef953371bcbe245588e0c7
-        r = Requests.get('http://api.openweathermap.org/data/2.5/forecast?zip=' + str(zip) + '&APPID=431a44405aef953371bcbe245588e0c7')
-        if r.status_code == 200:
-            success = True
+        if wund.status_code == 200:
+            wunderFailure = False
+            wundText = wund.json()
+    elif ZIP != '':
+        r = Requests.get('http://api.openweathermap.org/data/2.5/forecast?zip=' + str(ZIP) + '&APPID=431a44405aef953371bcbe245588e0c7')
+        wund = Requests.get('http://api.wunderground.com/api/f807def6b862d1f5/alerts/q/' + str(ZIP) + '.json')
+        if r.status_code == 200 or wund.status_code == 200:
+            openFailure = False
             json = r.json()
+        if wund.status_code == 200:
+            wunderFailure = False
+            wundText = wund.json()
+       
+        geolocator = Nominatim()
+        location = geolocator.geocode(ZIP)
+        lat = location.latitude
+        lon = location.longitude
     else:
-        pass
+        # This should be the user's lat and long in their profile
+        lat = 45
+        lon = -95
+            
+    # Unpack Open weathermap        
+    headers = ['Time (UTC)', 'Avg Temp (F)', 'Max Temp (F)', 'Min Temp (F)', 'Pressure', 'Cloudiness', 'Wind Speed', 'Wind Direction', 'Weather Main', 'Weather Descriptions']
 
-    #for key, value in json.items():
-    #    print(str(key) + '   ' + str(value))
+    times = []
+    avgTemps = []
+    maxTemps = []
+    minTemps = []
+    pressures = []
+    clouds = []
+    windSpeed = [] 
+    windDirection = [] 
+    weatherMains = []
+    weatherDescs = []
+    displayForecast = [times, avgTemps,maxTemps, minTemps, pressures, 
+                       clouds, windSpeed, windDirection, weatherMains, weatherDescs,]
+    if not openFailure:    
+        for item in json['list']:
+        
+            times.append(item['dt_txt'][:16])
+            avgTemps.append(item['main']['temp'])
+            maxTemps.append(item['main']['temp_max'])
+            minTemps.append(item['main']['temp_min'])
+            pressures.append(item['main']['pressure'])
+            clouds.append(item['clouds']['all'])
+            windSpeed.append(item['wind']['speed'])
+            windDirection.append(item['wind']['deg'])
+            weatherMains.append(item['weather'][0]['main'])
+            weatherDescs.append(item['weather'][0]['description'])
+        
+#         tempTemps = []
+#         for temp in avgTemps:
+#            t = (((9/5) * (temp - 273)) + 32)
+#            minTemps.append(t)        
+#         avgTemps = tempTemps
+#         
+#         tempTemps = []
+#         for temp in maxTemps:
+#            t = (((9/5) * (temp - 273)) + 32)
+#            minTemps.append(t)        
+#         maxTemps = tempTemps
+#         
+#         tempTemps = []
+#         for temp in minTemps:
+#            t = (((9/5) * (temp - 273)) + 32)
+#            minTemps.append(t)
+#         minTemps = tempTemps
+            
+        displayForecast2 = []
+        for pred in displayForecast:
+            displayForecast2 += pred
+    else:
+        displayForecast2 = []
 
-    # print('+1 Day')
-    # print((json['list']))
+    # WUnderground Alerts UnPacking
+    alertsForDisplay = []
+    if not wunderFailure:
+        for alert in wundText['alerts']:
+            alertsForDisplay.append([alert['description'], alert['date'], alert['expires'], alert['message']])
 
-    displayList = []
-    for forecast in json['list']:
-        displayList.append()
-
-
-    print('+1 Day 3AM')
-    print((json['list'][0]['main']['temp']))
-    #print((json['list'][0]))
-
-
-    # print('+1 Day 6AM')
-    # print((json['list'][1]))
-    # print('+1 Day 9AM')
-    # print((json['list'][2]))
-    # print('+1 Day 12PM')
-    # print((json['list'][3]))
-    # print('+1 Day 3PM')
-    # print((json['list'][4]))
-    # print('+1 Day 6PM')
-    # print((json['list'][5]))
-    # print('+1 Day 9PM')
-    # print((json['list'][6]))
-    # print()
-    # print()
-    # print('+2 Day 3AM')
-    # print((json['list'][7]))
-    # print('+2 Day 6AM')
-    # print((json['list'][8]))
-    # print('+2 Day 9AM')
-    # print((json['list'][9]))
-    # print('+2 Day 12PM')
-    # print((json['list'][10]))
-    # print('+2 Day 3PM')
-    # print((json['list'][11]))
-    # print('+2 Day 6PM')
-    # print((json['list'][12]))
-    # print('+2 Day 9PM')
-    # print((json['list'][13]))
-    # print()
-    # print()
-    # print('+3 Day 3AM')
-    # print((json['list'][14]))
-    # print('+3 Day 6AM')
-    # print((json['list'][15]))
-    # print('+3 Day 9AM')
-    # print((json['list'][16]))
-    # print('+3 Day 12PM')
-    # print((json['list'][17]))
-    # print('+3 Day 3PM')
-    # print((json['list'][18]))
-    # print('+3 Day 6PM')
-    # print((json['list'][19]))
-    # print('+3 Day 9PM')
-    # print((json['list'][20]))
-    # print()
-    # print()
-    # print('+4 Day 3AM')
-    # print((json['list'][21]))
-    # print('+4 Day 6AM')
-    # print((json['list'][22]))
-    # print('+4 Day 9AM')
-    # print((json['list'][23]))
-    # print('+4 Day 12PM')
-    # print((json['list'][24]))
-    # print('+4 Day 3PM')
-    # print((json['list'][25]))
-    # print('+4 Day 6PM')
-    # print((json['list'][26]))
-    # print('+4 Day 9PM')
-    # print((json['list'][27]))
-    # print()
-    # print()
-    # print('+5 Day 3AM')
-    # print((json['list'][28]))
-    # print('+5 Day 6AM')
-    # print((json['list'][29]))
-    # print('+5 Day 9AM')
-    # print((json['list'][30]))
-    # print('+5 Day 12PM')
-    # print((json['list'][31]))
-    # print('+5 Day 3PM')
-    # print((json['list'][32]))
-    # print('+5 Day 6PM')
-    # print((json['list'][33]))
-    # print('+5 Day 9PM')
-    # print((json['list'][36]))
-
-
-    '''
-    print('+3 Day')
-    print()
-    print('+4 Day')
-    print()
-    print('+5 Day')
-    print()
-    
-    '''
-    #j = Json.loads(json)
-    #json['']
     return render(request, 'blog/dashboard.html', {'lat':lat, 'lon':lon,
-                                                   'zip':zip, 'success':success})
-    #return render(request, 'blog/blog.html', {'topPosts': topPosts, 'blogImages': displayImages})
+                                                   'zip':zip, 'openFailure':openFailure,
+                                                    'displayForecast':displayForecast2,
+                                                    'headers':headers, 'alertsForDisplay':alertsForDisplay,
+                                                    })
 
 @login_required
 def post_deleted(request, id):
@@ -218,8 +190,7 @@ def post_detail(request, post_id):
     topPost = get_object_or_404(top_post, post_id=post_id)
     images = image.objects.filter(top_post_id=topPost.post_id)
     isAuthor = False
-    print(request.user.username)
-    print(topPost.user_id.username)
+
     if request.user.username == topPost.user_id.username:
         isAuthor = True
     dateNow = timezone.now()
@@ -256,25 +227,6 @@ def post_edit(request, post_id):
         form = PostForm(instance=topPost, prefix='PostForm')
         # images = ImageForm()
         return render(request, 'blog/post_edit.html', {'form': form, 'images': images})
-
-
-'''Uses old django girls post object
-@login_required
-def post_edit(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.method == "POST":
-        form = PostForm(request.POST, instance=post)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-            return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostForm(instance=post)
-    return render(request, 'blog/post_edit.html', {'form': form})
-'''
-
 
 def home(request):
     return render(request, 'blog/home.html')

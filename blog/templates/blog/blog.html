@@ -75,7 +75,6 @@ and is wrapped around the whole page content, except for the footer in this exam
      <!--Testing comments-->
       <a href="{% url 'post_detail' post_id=post.post_id %}">
         <h5 style="font-family: Arial, Helvetica, sans-serif;">Comments: {{ post.comment.count }}</h5></a>
-
       {% endfor %}
 
     <!-- END BLOG ENTRIES -->

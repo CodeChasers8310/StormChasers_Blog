@@ -72,7 +72,7 @@
               <a  class="btn rounded btn-outline-info btn-sm" href="{% url 'password_change' %}" style="color:#3d83e5;">Change Password</a>
           {% else %}
               <a href="{% url 'login' %}" style="color:#3d83e5;"    ><span class="btn rounded btn-outline-info btn-sm"></span> Login</a>
-              <a class="btn rounded btn-outline-info btn-sm" href="{% url 'register' %}" role="button">Register</a>
+              <a  class="btn rounded btn-outline-info btn-sm" href="{% url 'register' %}" style="color:#3d83e5;">Register</a>
           {% endif %}
       </div>
 </div>
@@ -96,8 +96,7 @@
                 <li><a href="{% url 'blog' %}">Blog</a></li>
                 <li><a href="{% url 'about_us' %}">About Us</a></li>
                 <li><a href="{% url 'my_profile' %}">My Profile</a></li>
-                <li><a href="{% url 'subscriptions' %}">Subscriptions</a></li>
-                <li><a href="{% url 'locations' %}">Locations</a></li>
+
             </ul>
         </div>
 </div>

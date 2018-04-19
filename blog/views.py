@@ -469,8 +469,7 @@ def user_login(request):
 
 @login_required
 def my_profile(request):
-    profile = get_object_or_404(Profile)
-    return render(request, 'blog/my_profile.html', {'section':'my_profile', 'profile': profile})
+    return render(request, 'blog/my_profile.html', {'section':'my_profile'})
 
 @login_required
 def edit(request):
@@ -484,8 +483,7 @@ def edit(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            profile = get_object_or_404(Profile)
-            return render(request, 'blog/my_profile.html', {'section': 'my_profile', 'profile': profile})
+            return render(request, 'blog/my_profile.html', {'section': 'my_profile'})
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(

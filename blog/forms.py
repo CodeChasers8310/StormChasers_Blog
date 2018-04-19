@@ -1,5 +1,5 @@
 from django import forms
-from .models import image, top_post, User, tags, response_post
+from .models import image, top_post, User, tags, response_post, Profile
 
 class PostForm(forms.ModelForm):
     #author = forms.CharField(max_length=128)
@@ -40,7 +40,7 @@ class UserRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email' )
+        fields = ('username', 'first_name', 'last_name', 'email')
 
     def clean_password2(self):
         cd = self.cleaned_data
@@ -54,3 +54,18 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = response_post
         fields = ('text',)
+
+####
+class LoginForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('address', 'city', 'zipcode')

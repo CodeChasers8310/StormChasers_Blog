@@ -36,5 +36,17 @@ urlpatterns = [
     url(r'^post/(?P<post_id>\d+)/comment/$', views.add_comment_to_post, name='add_comment_to_post'),
     url(r'^comment/(?P<post_id>\d+)/approve/$', views.comment_approve, name='comment_approve'),
     url(r'^comment/(?P<post_id>\d+)/remove/$', views.comment_remove, name='comment_remove'),
+# post views
+####
+    #url(r'^blog/login/$', views.user_login, name='login'),
+    # login / logout urls
+    #url(r'^login/$','django.contrib.auth.views.login', name='login'),
+    #url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
+    #url(r'^logout-then-login/$', 'django.contrib.auth.views.logout_then_login', name='logout_then_login'),
+    #url(r'^$', views.my_profile, name='my_profile'),
 
+# change password urls
+    url(r'^password-change/$', authViews.password_change, name='password_change'),
+    url(r'^password-change/done/$',authViews.password_change_done, name='password_change_done'),
+    url(r'^edit/$', views.edit, name='edit'),
 ]

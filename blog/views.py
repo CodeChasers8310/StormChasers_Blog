@@ -25,6 +25,15 @@ from watson_developer_cloud import LanguageTranslatorV2 as LanguageTranslator1
 import requests as Requests
 import json as Json
 from geopy.geocoders import Nominatim
+#######
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.contrib.auth import authenticate, login
+from .forms import LoginForm
+from .models import Profile
+from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
+from django.contrib import messages
+#######
 
 @login_required
 def new_top_post(request):
@@ -300,9 +309,6 @@ def blog_search(request):  # , formTags):
         return render(request, 'blog/blog.html', {'topPosts': topPosts, 'blogImages': displayImages})
 
 
-@login_required
-def my_profile(request):
-    return render(request, 'blog/my_profile.html')
 
 
 def about_us(request):
@@ -439,3 +445,52 @@ def comment_remove(request, post_id):
     comment.text = 'COMMENT DELETED'
     comment.save()
     return redirect('post_detail', post_id=comment.top_post_id.post_id)
+
+####
+def user_login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = authenticate(username=cd['username'],
+                                password=cd['password'])
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponse('Authenticated '\
+                                        'successfully')
+                else:
+                    return HttpResponse('Disabled account')
+            else:
+                return HttpResponse('Invalid login')
+    else:
+        form = LoginForm()
+    return render(request, 'blog/login.html', {'form': form})
+
+@login_required
+def my_profile(request):
+    profile = get_object_or_404(Profile)
+    return render(request, 'blog/my_profile.html', {'section':'my_profile', 'profile': profile})
+
+@login_required
+def edit(request):
+    if request.method == 'POST':
+        user_form = UserEditForm(instance=request.user,
+                                 data=request.POST)
+        profile_form = ProfileEditForm(
+                                    instance=request.user.profile,
+                                    data=request.POST,
+                                    files=request.FILES)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+
+            return render(request, 'blog/my_profile.html', {'section': 'my_profile'})
+    else:
+        user_form = UserEditForm(instance=request.user)
+        profile_form = ProfileEditForm(
+                                    instance=request.user.profile)
+    return render(request,
+                  'blog/edit.html',
+                  {'user_form': user_form,
+                   'profile_form': profile_form})

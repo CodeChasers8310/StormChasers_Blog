@@ -84,11 +84,14 @@ def getForecast(request):
     wunderFailure = True
     json = {}
 
+    # Dark Sky Key = 02ec64c91583d9ce29f972682bbfb4cf
+
     # Gets data for each api based on input
     # The resulting lat long is pass to the javascript google map on the dashboard    
     if lat != '' and lon != '':
         r = Requests.get('http://api.openweathermap.org/data/2.5/forecast?lat=' + str(lat) + '&lon=' + str(lon) + '&APPID=431a44405aef953371bcbe245588e0c7')
         wund = Requests.get('http://api.wunderground.com/api/f807def6b862d1f5/alerts/q/' + str(lat) + ',' + str(lon) + '.json')
+        darkSky = Requests.get('https://api.darksky.net/forecast/02ec64c91583d9ce29f972682bbfb4cf/37.8267,-122.4233')
         #wund = Requests.get('http://api.wunderground.com/api/f807def6b862d1f5/alerts/q/35.691,105.561.json')
         if r.status_code == 200:
             openFailure = False
@@ -143,25 +146,6 @@ def getForecast(request):
             windDirection.append(item['wind']['deg'])
             weatherMains.append(item['weather'][0]['main'])
             weatherDescs.append(item['weather'][0]['description'])
-        
-#         tempTemps = []
-#         for temp in avgTemps:
-#            t = (((9/5) * (temp - 273)) + 32)
-#            minTemps.append(t)        
-#         avgTemps = tempTemps
-#         
-#         tempTemps = []
-#         for temp in maxTemps:
-#            t = (((9/5) * (temp - 273)) + 32)
-#            minTemps.append(t)        
-#         maxTemps = tempTemps
-#         
-#         tempTemps = []
-#         for temp in minTemps:
-#            t = (((9/5) * (temp - 273)) + 32)
-#            minTemps.append(t)
-#         minTemps = tempTemps
-            
         displayForecast2 = []
         for pred in displayForecast:
             displayForecast2 += pred

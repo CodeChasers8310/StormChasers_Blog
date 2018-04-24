@@ -535,7 +535,7 @@ def register(request):
             new_user.save()
             # Create the user profile
             profile = Profile.objects.create(user=new_user)
-            return render(request, 'blog/my_profile.html', {'profile': profile, 'new_user': new_user})
+            return render(request, 'blog/register_done.html', {'profile': profile, 'new_user': new_user})
         # return render(request,
         #  'blog/register_done.html',
         # {'new_user': new_user})

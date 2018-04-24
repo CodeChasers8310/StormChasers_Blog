@@ -33,6 +33,8 @@ from .forms import LoginForm
 from .models import Profile
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
 from django.contrib import messages
+import random
+import time
 #######
 
 @login_required
@@ -89,10 +91,44 @@ def getForecast(request):
     lon = request.GET['lon']
     ZIP = request.GET['zip']
 
+    getHistorical = False
+    year = request.GET['year']
+    month = request.GET['month']
+    day = request.GET['day']
+
+    unixTime = ''
+    if year != '' and month != '' and day != '':
+        getHistorical = True
+
+        if len(year) != 4 or len(month) != 2 or len(day) != 2:
+            pass
+
+        if not year.isdigit():
+            pass
+        elif not month.isdigit():
+            pass
+        elif not day.isdigit():
+            pass
+
+        pattern = '%Y%m%d'
+        date_time = str(year) + str(month) + str(day)
+        unixTime = str(int(time.mktime(time.strptime(date_time, pattern))))
+
+    if ZIP == '':
+        # If no user zipcode, get one from a large US city/zip
+        if request.user.profile.zipcode:
+            ZIP = request.user.zipcode
+        else:
+            ZIP = random.choice(['79936', '90011', '60629', '90650', '90201',
+                                 '77084','92335','78521','77449','78572','90250',])
+
     openFailure = True
     wunderFailure = True
+    darkSkyFailure = True
     json = {}
 
+    showingZIP = False
+    showingLatLon = False
     # Dark Sky Key = 02ec64c91583d9ce29f972682bbfb4cf
 
     # Gets data for each api based on input
@@ -100,14 +136,19 @@ def getForecast(request):
     if lat != '' and lon != '':
         r = Requests.get('http://api.openweathermap.org/data/2.5/forecast?lat=' + str(lat) + '&lon=' + str(lon) + '&APPID=431a44405aef953371bcbe245588e0c7')
         wund = Requests.get('http://api.wunderground.com/api/f807def6b862d1f5/alerts/q/' + str(lat) + ',' + str(lon) + '.json')
-        darkSky = Requests.get('https://api.darksky.net/forecast/02ec64c91583d9ce29f972682bbfb4cf/37.8267,-122.4233')
-        #wund = Requests.get('http://api.wunderground.com/api/f807def6b862d1f5/alerts/q/35.691,105.561.json')
+        if getHistorical:
+            darkSky = Requests.get('https://api.darksky.net/forecast/02ec64c91583d9ce29f972682bbfb4cf/' + str(lat) + ',' + str(lon) + ',' + unixTime)
+            if darkSky.status_code == 200:
+                darkSkyFailure = False
+                darkSkyText = darkSky.json()
         if r.status_code == 200:
             openFailure = False
             json = r.json()
         if wund.status_code == 200:
             wunderFailure = False
             wundText = wund.json()
+
+        showingLatLon = True
     elif ZIP != '':
         r = Requests.get('http://api.openweathermap.org/data/2.5/forecast?zip=' + str(ZIP) + '&APPID=431a44405aef953371bcbe245588e0c7')
         wund = Requests.get('http://api.wunderground.com/api/f807def6b862d1f5/alerts/q/' + str(ZIP) + '.json')
@@ -122,12 +163,18 @@ def getForecast(request):
         location = geolocator.geocode(ZIP)
         lat = location.latitude
         lon = location.longitude
+        if getHistorical:
+            darkSky = Requests.get('https://api.darksky.net/forecast/02ec64c91583d9ce29f972682bbfb4cf/' + str(lat) + ',' + str(lon) + ',' + unixTime)
+            if darkSky.status_code == 200:
+                darkSkyFailure = False
+                darkSkyText = darkSky.json()
+
+        showingZIP = True
     else:
-        # This should be the user's lat and long in their profile
-        lat = 45
-        lon = -95
+        ZIP = random.choice(['79936', '90011', '60629', '90650', '90201',
+                                 '77084','92335','78521','77449','78572','90250',])
             
-    # Unpack Open weathermap        
+    # Unpack Open weathermap
     headers = ['Time (UTC)', 'Avg Temp (F)', 'Max Temp (F)', 'Min Temp (F)', 'Pressure', 'Cloudiness', 'Wind Speed', 'Wind Direction', 'Weather Main', 'Weather Descriptions']
 
     times = []
@@ -142,7 +189,10 @@ def getForecast(request):
     weatherDescs = []
     displayForecast = [times, avgTemps,maxTemps, minTemps, pressures, 
                        clouds, windSpeed, windDirection, weatherMains, weatherDescs,]
-    if not openFailure:    
+    displayFiveDayForecast = False
+    if not openFailure:
+        displayFiveDayForecast = True
+
         for item in json['list']:
         
             times.append(item['dt_txt'][:16])
@@ -156,21 +206,99 @@ def getForecast(request):
             weatherMains.append(item['weather'][0]['main'])
             weatherDescs.append(item['weather'][0]['description'])
         displayForecast2 = []
+        temps = [avgTemps, maxTemps, minTemps]
+        def kelvinToFarenheight(list):
+            newTemps = []
+            for temp in list:
+                temp = round(1.8 * (temp - 273) + 32, 1)
+                newTemps.append(temp)
+            return newTemps
+
+        avgTemps = kelvinToFarenheight(avgTemps)
+        maxTemps = kelvinToFarenheight(maxTemps)
+        minTemps = kelvinToFarenheight(minTemps)
+
+        displayForecast[1] = avgTemps
+        displayForecast[2] = maxTemps
+        displayForecast[3] = minTemps
+
         for pred in displayForecast:
             displayForecast2 += pred
     else:
         displayForecast2 = []
 
     # WUnderground Alerts UnPacking
+    displayAlerts = False
     alertsForDisplay = []
     if not wunderFailure:
-        for alert in wundText['alerts']:
-            alertsForDisplay.append([alert['description'], alert['date'], alert['expires'], alert['message']])
+        displayAlerts = True
+        if not wundText['alerts']:
+            for alert in wundText['alerts']:
+                alertsForDisplay.append([alert['description'], alert['date'], alert['expires'], alert['message']])
+        else:
+            alertsForDisplay.append(['No Alerts', 'No Alerts',
+                                    'No Alerts', 'No Alerts'])
+
+    # DarkSky Alert Unpacking
+    # Histical Times = 6:00am - 12pm - 6pm - 12am - avg daily temp
+    displayHistorical = False
+    darkSkyDisplayDict = {}
+    if not darkSkyFailure:
+        displayHistorical = True
+        darkSkyDisplay = []
+        minTempHistorical = 999
+        maxTempHistorical = -999
+        avgTempHistorical = 0
+        avgHumidity = 0
+        avgWindSpeed = 0
+        avgCloudCover = 0
+        avgPrecipProb = 0
+        avgPrecipIntensity = 0
+        summary = []
+        counter = 0
+        try:
+            for data in darkSkyText['hourly']['data']:
+                summary.append(data['summary'])
+                if data['temperature'] < minTempHistorical:
+                    minTempHistorical = data['temperature']
+                if data['temperature'] > maxTempHistorical:
+                    maxTempHistorical = data['temperature']
+                avgTempHistorical += data['temperature']
+                avgHumidity += data['humidity']
+                avgPrecipProb += data['precipProbability']
+                avgPrecipIntensity += data['precipIntensity']
+                avgWindSpeed += data['windSpeed']
+                avgCloudCover += data['cloudCover']
+                counter += 1
+        except KeyError:
+            print('Error')
+
+        try:
+            summary = random.choice(summary)
+            avgHumidity = round(avgHumidity / counter, 2)
+            avgWindSpeed = round(avgWindSpeed / counter, 2)
+            avgCloudCover = round(avgCloudCover / counter, 2)
+            avgPrecipProb = round(avgPrecipProb / counter, 2)
+            avgPrecipIntensity = round(avgPrecipIntensity / counter, 2)
+        except ZeroDivisionError:
+            print('Error')
+
+
+
+        darkSkyDisplayDict = {'summary':summary, 'minTempHistorical':minTempHistorical,
+                              'maxTempHistorical':maxTempHistorical, 'avgTempHistorical':avgTempHistorical,
+                              'avgHumidity':avgHumidity, 'avgWindSpeed':avgWindSpeed, 'avgCloudCover':avgCloudCover,
+                              'avgPrecipProb':avgPrecipProb, 'avgPrecipIntensity':avgPrecipIntensity,}
+
 
     return render(request, 'blog/dashboard.html', {'lat':lat, 'lon':lon,
-                                                   'zip':zip, 'openFailure':openFailure,
-                                                    'displayForecast':displayForecast2,
-                                                    'headers':headers, 'alertsForDisplay':alertsForDisplay,
+                                                   'ZIP':ZIP, 'openFailure':openFailure,
+                                                   'displayForecast':displayForecast2,
+                                                   'headers':headers, 'alertsForDisplay':alertsForDisplay,
+                                                   'showingZIP':showingZIP, 'showingLatLon':showingLatLon,
+                                                   'darkSkyDisplayDict':darkSkyDisplayDict, 'displayHistorical':displayHistorical,
+                                                   'displayAlerts':displayAlerts, 'displayFiveDayForecast':displayFiveDayForecast,
+                                                   'year':year, 'month':month, 'day':day,
                                                     })
 
 @login_required

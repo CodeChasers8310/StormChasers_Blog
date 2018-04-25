@@ -71,6 +71,7 @@ def new_top_post(request):
 
             for tag in tags:
                 tag = tag.strip()
+                tag = tag.lower()
                 newTag = modelsTag(tag=tag, top_post_id=topPostInstance)
                 newTag.save()
 
@@ -125,17 +126,19 @@ def getForecast(request):
     openFailure = True
     wunderFailure = True
     darkSkyFailure = True
+    nasaFailure = True
     json = {}
 
     showingZIP = False
     showingLatLon = False
     # Dark Sky Key = 02ec64c91583d9ce29f972682bbfb4cf
-
+    nasa_api_key = 'DQqDjMLODAtKzu2EGp4sntDhUlSFkPRMZ6rocPeC'
     # Gets data for each api based on input
     # The resulting lat long is pass to the javascript google map on the dashboard    
     if lat != '' and lon != '':
         r = Requests.get('http://api.openweathermap.org/data/2.5/forecast?lat=' + str(lat) + '&lon=' + str(lon) + '&APPID=431a44405aef953371bcbe245588e0c7')
         wund = Requests.get('http://api.wunderground.com/api/f807def6b862d1f5/alerts/q/' + str(lat) + ',' + str(lon) + '.json')
+        nasa = Requests.get('https://api.nasa.gov/planetary/earth/imagery/?lon=' + str(lon) + '&lat=' + str(lat) + '&cloud_score=' + 'True' + '&api_key=' + nasa_api_key)
         if getHistorical:
             darkSky = Requests.get('https://api.darksky.net/forecast/02ec64c91583d9ce29f972682bbfb4cf/' + str(lat) + ',' + str(lon) + ',' + unixTime)
             if darkSky.status_code == 200:
@@ -147,6 +150,9 @@ def getForecast(request):
         if wund.status_code == 200:
             wunderFailure = False
             wundText = wund.json()
+        if nasa.status_code == 200:
+            nasaFailure = False
+            nasaText = nasa.json()
 
         showingLatLon = True
     elif ZIP != '':
@@ -168,6 +174,11 @@ def getForecast(request):
             if darkSky.status_code == 200:
                 darkSkyFailure = False
                 darkSkyText = darkSky.json()
+
+        nasa = Requests.get('https://api.nasa.gov/planetary/earth/imagery/?lon=' + str(lon) + '&lat=' + str(lat) + '&cloud_score=' + 'True' + '&api_key=' + nasa_api_key)
+        if nasa.status_code == 200:
+
+
 
         showingZIP = True
     else:
@@ -291,6 +302,22 @@ def getForecast(request):
                               'avgPrecipProb':avgPrecipProb, 'avgPrecipIntensity':avgPrecipIntensity,}
 
 
+        # NASA API Image
+        displayNasa = False
+        if not nasaFailure:
+            displayNasa = True
+
+            cloud_score = nasaText['cloud_score']
+            date = nasaText['date'][:10]
+            dateTime = nasaText['date'][11:]
+            image_url = nasaText['url']
+            planet = nasaText['resource']['planet']
+
+        nasaDisplayDict = {'cloud_score':cloud_score, 'date':date,
+                           'image_url':image_url, 'planet':planet, 'dateTime':dateTime}
+
+
+
     return render(request, 'blog/dashboard.html', {'lat':lat, 'lon':lon,
                                                    'ZIP':ZIP, 'openFailure':openFailure,
                                                    'displayForecast':displayForecast2,
@@ -298,7 +325,8 @@ def getForecast(request):
                                                    'showingZIP':showingZIP, 'showingLatLon':showingLatLon,
                                                    'darkSkyDisplayDict':darkSkyDisplayDict, 'displayHistorical':displayHistorical,
                                                    'displayAlerts':displayAlerts, 'displayFiveDayForecast':displayFiveDayForecast,
-                                                   'year':year, 'month':month, 'day':day,
+                                                   'year':year, 'month':month, 'day':day, 'displayNasa':displayNasa,
+                                                   'nasaDisplayDict':nasaDisplayDict,
                                                     })
 
 @login_required
@@ -387,7 +415,7 @@ def blog_search(request):  # , formTags):
         searchTerms = newSearch.split()
         postIds = []
         for tag in searchTerms:
-            dataBaseTags = modelsTag.objects.filter(tag=tag)
+            dataBaseTags = modelsTag.objects.filter(tag=tag.lower())
             for dataBaseTag in dataBaseTags:
                 post = dataBaseTag.top_post_id
                 postIds.append(post.post_id)

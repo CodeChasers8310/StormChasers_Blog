@@ -298,6 +298,29 @@
   </table></div>
 {% endif %}
 
+{% if displayNasa %}
+
+<div class="container-fluid" style="padding: 10px;">
+ <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>% Covered by Clouds</th>
+          <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ nasaDisplayDict.date }}</td>
+        <td>{{ nasaDisplayDict.dateTime }}</td>
+        <td>{{ nasaDisplayDict.cloud_score }}</td>
+        <td>{{ nasaDisplayDict.planet }}</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+{% endif %}
 
 {% endblock %}
 

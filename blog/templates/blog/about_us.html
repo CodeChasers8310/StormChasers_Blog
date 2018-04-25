@@ -1,12 +1,17 @@
 {% extends 'blog/base.html' %}
+{% load staticfiles %}
 
 {% block content %}
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" xmlns:margin-left="http://www.w3.org/1999/xhtml" xmlns:float="http://www.w3.org/1999/xhtml">
         <head>
             <meta charset="UTF-8">
             <title>Title</title>
-            <h1>About Us</h1>
+            <h1 class="logo">
+                <img src="{% static 'images/logo.png' %}" width ="300" height="300">
+            </h1>
+
+            <h1 class="display-3">About Us</h1>
         </head>
 
         <style>
@@ -17,19 +22,46 @@
         <body>
             <div class="container">
                 <p>
-                    <h4><i> Join us in the quest to witness a tornado close and personal.We are the StormChasers.</i></h4>
+                    <h4><i> Join us in the quest to witness a tornado close and personal.We are the StormChasers.<br><br><br>
+                    Storm chasing (also referred to as tornado chasing tours, tornado safaris or storm safaris) with organized tours is a rapidly growing tourism industry where experienced storm chasers
+                    guide adventurers and tourists to amazing severe weather. The hunt for tornadoes, super cells, hail, lightning goes all over the Midwestern states of USA. The tours are usually between
+                    5-10 days in order to maximize your chances of seeing Mother Nature in her worst mood.<br><br><br>
+                    Storm Chasing usually takes place in the spring, around May-June, but you can go chasing in April and July as well. The tour could take you from the Rocky Mountains in the West to the
+                    East coast and from the Mexican border in the South up to the Canadian border in the North. The nature of weather makes it impossible to know where you will be any given day.<br><br><br>
+                    The StormChasers community will guide you towards an experience of a lifetime, which will become truly addicting. StormChasers is not a Tour company, we just provide the information about
+                    the storm chasing. We like to be a one stop storm chasing blog on the web.
+
+                    </i></h4>
                 <p>
 
                 <span style="background-color:yellow">
                     <i>
                         <b><u> French  Translation: </u></b> <h4 ><i> {{ translations }} </i></h4>
+                        <br><br><br>
                     </i>
                 </span>
 
+                 <h1><i>This blog is brought to you by</i></h1>
+                    <br><br>
 
-{#                </p>#}
-{#                    <h4 ><i> {{ translations }} </i></h4>#}
-{#                </p>#}
+
+                 <div style="width:1500px; height:500px" >
+                    <div style="width:2000px;">
+                          <img style=" float:left; display:inline" src="{% static 'images/Hollie.png' %}" hspace="50" width ="200" height="200" alt="Hollie K. Rosser"/>
+                          <img style=" float:left; display:inline"; margin-left:50px src="{% static 'images/Kevin.png' %}" hspace="50" width ="200" height="200" alt="Kevin Lumbard"/>
+                          <img style=" float:left; display:inline" ; margin-left:50px src="{% static 'images/John.png' %}" hspace="50" width ="200" height="200" alt="Jonathan Placzek"/>
+                          <img style=" float:left; display:inline" ; margin-left:50px src="{% static 'images/Edem.png' %}" hspace="50" width ="200" height="200" alt="Edem Dosseh"/>
+                          <img style=" float:left; display:inline"; margin-left:50px   src="{% static 'images/Will.png' %}" hspace="50" width ="200" height="200" alt="William Wetzel"/>
+                     </div>
+
+
+                     <div style="width:1550px;">
+                        <p><h2 style="height:50px; text-align:center;"  > <i>Hollie Rosser, Kevin Lumbard, Jonathan Placzek, Edem Dosseh</i>, and last but not least <i>Will Wetzel</i></h2></p>
+                     </div>
+
+                 </div>
+
+
             </div>
         </body>
     </html>

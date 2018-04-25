@@ -429,7 +429,7 @@ def about_us(request):
         password='jxPHFLuHnTra')
 
     translation = language_translator.translate(
-        text=['Join us in the quest to witness a tornado close and personal.We are the StormChasers.'],
+        text=['Join us in the quest to witness a tornado close and personal.We are the StormChasers. Storm chasing (also referred to as tornado chasing tours, tornado safaris or storm safaris) with organized tours is a rapidly growing tourism industry where experienced storm chasers guide adventurers and tourists to amazing severe weather.The hunt for tornadoes, super cells, hail, lightning goes all over the Midwestern states of USA. The tours are usually between 5-10 days in order to maximize your chances of seeing Mother Nature in her worst mood. Storm Chasing usually takes place in the spring, around May-June, but you can go chasing in April and July as well. The tour could take you from the Rocky Mountains in the West to the East coast and from the Mexican border in the South up to the Canadian border in the North. The nature of weather makes it impossible to know where you will be any given day. The StormChasers community will guide you towards an experience of a lifetime, which will become truly addicting. StormChasers is not a Tour company, we just provide the information about the storm chasing. We like to be a one stop storm chasing blog on the web.'],
         source='en',
         target='fr')
 

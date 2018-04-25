@@ -300,6 +300,14 @@
 
 {% if displayNasa %}
 
+<div><h1>NASA Locational Image</h1></div>
+<center>
+    <p style="text-align: center">Gets a <a href="https://en.wikipedia.org/wiki/Landsat_8">Landsat 8</a> image of the requested area</p>
+</center>
+
+
+<img src="{{ nasaDisplayDict.image_url }}" alt="Photo of Earth">
+
 <div class="container-fluid" style="padding: 10px;">
  <table class="table table-bordered">
     <thead>
@@ -307,7 +315,7 @@
         <th>Date</th>
         <th>Time</th>
         <th>% Covered by Clouds</th>
-          <th></th>
+          <th>Planet</th>
       </tr>
     </thead>
     <tbody>
@@ -319,8 +327,8 @@
       </tr>
     </tbody>
   </table></div>
-
 {% endif %}
+
 
 {% endblock %}
 

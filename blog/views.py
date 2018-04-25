@@ -127,6 +127,8 @@ def getForecast(request):
     wunderFailure = True
     darkSkyFailure = True
     nasaFailure = True
+
+    nasaText = None
     json = {}
 
     showingZIP = False
@@ -176,11 +178,10 @@ def getForecast(request):
                 darkSkyText = darkSky.json()
 
         nasa = Requests.get('https://api.nasa.gov/planetary/earth/imagery/?lon=' + str(lon) + '&lat=' + str(lat) + '&cloud_score=' + 'True' + '&api_key=' + nasa_api_key)
+
         if nasa.status_code == 200:
-
-
-
-        showingZIP = True
+            nasaFailure = False
+            nasaText = nasa.json()
     else:
         ZIP = random.choice(['79936', '90011', '60629', '90650', '90201',
                                  '77084','92335','78521','77449','78572','90250',])
@@ -301,20 +302,21 @@ def getForecast(request):
                               'avgHumidity':avgHumidity, 'avgWindSpeed':avgWindSpeed, 'avgCloudCover':avgCloudCover,
                               'avgPrecipProb':avgPrecipProb, 'avgPrecipIntensity':avgPrecipIntensity,}
 
+    print(nasaText)
+    # NASA API Image
+    displayNasa = False
+    nasaDisplayDict = {}
+    if not nasaFailure:
+        displayNasa = True
 
-        # NASA API Image
-        displayNasa = False
-        if not nasaFailure:
-            displayNasa = True
-
-            cloud_score = nasaText['cloud_score']
-            date = nasaText['date'][:10]
-            dateTime = nasaText['date'][11:]
-            image_url = nasaText['url']
-            planet = nasaText['resource']['planet']
+        cloud_score = nasaText['cloud_score']
+        date = nasaText['date'][:10]
+        dateTime = nasaText['date'][11:]
+        image_url = nasaText['url']
+        planet = nasaText['resource']['planet']
 
         nasaDisplayDict = {'cloud_score':cloud_score, 'date':date,
-                           'image_url':image_url, 'planet':planet, 'dateTime':dateTime}
+                       'image_url':image_url, 'planet':planet, 'dateTime':dateTime}
 
 
 

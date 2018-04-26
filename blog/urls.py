@@ -6,7 +6,8 @@ from django.contrib.auth import views as authViews
 urlpatterns = [
     url(r'^$', views.home, name='post_list'),
     url(r'^home/$', views.home, name='home'),
-    url(r'^dashboard/$', views.dashboard, name='dashboard'),
+    url(r'^dashboard/$', views.getForecast, name='dashboard'),
+    #url(r'^dashboard/$', views.getForecast, name='get_forecast'),
     url(r'^locations/$', views.locations, name='locations'),
     url(r'^blog/$', views.blog, name='blog'),
     # url(r'^blog_search/(?P<formTags>\d+)/$', views.blog_search, name='blog_search'),

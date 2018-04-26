@@ -169,8 +169,13 @@
 
 <div><h3>We Use Your Profile ZIP Code by default</h3></div>
 <div><h5>Enter either Lat and Long, or ZIP</h5></div>
-{% if openFailure %}
-<div><h3 style="background-color: orange;">Search Failed - please try again</h3></div>
+
+{% if searchFailed %}
+<div><h3 style="background-color: #fcd380;">Location Search Failed - please try again</h3></div>
+{% endif %}
+
+{% if historicalSearchFailed %}
+<div><h3 style="background-color: #fcd380;">Historical Search Failed - please try again</h3></div>
 {% endif %}
 
 <form id=search_form method="get" action="{% url 'get_forecast' %}">
@@ -205,7 +210,7 @@
 
 <div><h1>Weather Map</h1></div>
 <center>
-<p style="text-align: center">Uses Google Maps in conjunction with the OpenWeather API to show live conditions</p>
+<p style="text-align: center">Uses Google Maps in conjunction with the <a target="_blank" href="https://openweathermap.org/api"> OpenWeather API</a> to show live conditions</p>
 </center>
     <div id="map-canvas"></div>
 {% if displayFiveDayForecast %}
@@ -238,7 +243,7 @@
 {% if displayAlerts %}_
 <div><h1>Weather Alerts</h1></div>
 <center>
-<p style="text-align: center">Uses WeatherUnderGround to get weather alerts</p>
+<p style="text-align: center">Uses <a target="_blank" href="https://www.wunderground.com/">WeatherUnderGround</a>  to get weather alerts</p>
 </center>
 
 {% for alert in alertsForDisplay %}
@@ -262,7 +267,7 @@
 {% if displayHistorical %}_
 <div style="padding-top: 40px;"><h1>Weather History</h1></div>
 <center>
-<p style="text-align: center">Uses DarkSky Historical Weather API to get Average Weather Data for a past day</p>
+    <p style="text-align: center">Uses <a target="_blank" href="https://darksky.net/">DarkSky</a>   Historical Weather API to get Average Weather Data for a past day</p>
 </center>
 <center>
 <p style="text-align: center; font-size: 24px;">Date: {{ year }}-{{ month }}-{{ day }}</p>
@@ -293,6 +298,36 @@
         <td>{{ darkSkyDisplayDict.avgCloudCover }}</td>
         <td>{{ darkSkyDisplayDict.avgPrecipProb }}</td>
         <td>{{ darkSkyDisplayDict.avgPrecipIntensity }}</td>
+      </tr>
+    </tbody>
+  </table></div>
+{% endif %}
+
+{% if displayNasa %}
+
+<div><h1>NASA Locational Image</h1></div>
+<center>
+    <p style="text-align: center">Gets a <a target="_blank" href="https://en.wikipedia.org/wiki/Landsat_8">Landsat 8</a> image of the requested area from <a target="_blank" href="https://api.nasa.gov/index.html">NASA</a></p>
+</center>
+
+<img src="{{ nasaDisplayDict.image_url }}" alt="Photo of Earth">
+
+<div class="container-fluid" style="padding: 10px;">
+ <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>% Covered by Clouds</th>
+          <th>Planet</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ nasaDisplayDict.date }}</td>
+        <td>{{ nasaDisplayDict.dateTime }}</td>
+        <td>{{ nasaDisplayDict.cloud_score }}</td>
+        <td>{{ nasaDisplayDict.planet }}</td>
       </tr>
     </tbody>
   </table></div>

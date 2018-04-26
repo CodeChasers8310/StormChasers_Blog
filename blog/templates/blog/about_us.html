@@ -17,7 +17,27 @@
         <style>
             body {font-family: "Lato", sans-serif}
 
-        </style>
+div.gallery {
+    margin: 5px;
+    float: left;
+    width: 180px;
+}
+
+div.gallery:hover {
+    border: 1px;
+    border-style: inset;
+}
+
+div.gallery img {
+    width: 100%;
+    height: auto;
+}
+
+div.desc {
+    padding: 15px;
+    text-align: center;
+}
+</style>
 
         <body>
             <div class="container">
@@ -45,22 +65,54 @@
                     <br><br>
 
 
-                 <div style="width:1500px; height:500px" >
-                    <div style="width:2000px;">
-                          <img style=" float:left; display:inline" src="{% static 'images/Hollie.png' %}" hspace="50" width ="200" height="200" alt="Hollie K. Rosser"/>
-                          <img style=" float:left; display:inline"; margin-left:50px src="{% static 'images/Kevin.png' %}" hspace="50" width ="200" height="200" alt="Kevin Lumbard"/>
-                          <img style=" float:left; display:inline" ; margin-left:50px src="{% static 'images/John.png' %}" hspace="50" width ="200" height="200" alt="Jonathan Placzek"/>
-                          <img style=" float:left; display:inline" ; margin-left:50px src="{% static 'images/Edem.png' %}" hspace="50" width ="200" height="200" alt="Edem Dosseh"/>
-                          <img style=" float:left; display:inline"; margin-left:50px   src="{% static 'images/Will.png' %}" hspace="50" width ="200" height="200" alt="William Wetzel"/>
-                     </div>
+                 <!--<div class="w3-container"" >-->
+                    <!--<div class="w3-container">-->
+                          <!--<img style=" float:left; display:inline" src="{% static 'images/Hollie.png' %}" hspace="50" width ="200" height="200" alt="Hollie K. Rosser"/>-->
+                          <!--<img style=" float:left; display:inline"; margin-left:50px src="{% static 'images/Kevin.png' %}" hspace="50" width ="200" height="200" alt="Kevin Lumbard"/>-->
+                          <!--<img style=" float:left; display:inline" ; margin-left:50px src="{% static 'images/John.png' %}" hspace="50" width ="200" height="200" alt="Jonathan Placzek"/>-->
+                          <!--<img style=" float:left; display:inline" ; margin-left:50px src="{% static 'images/Edem.png' %}" hspace="50" width ="200" height="200" alt="Edem Dosseh"/>-->
+                          <!--<img style=" float:left; display:inline"; margin-left:50px   src="{% static 'images/Will.png' %}" hspace="50" width ="200" height="200" alt="William Wetzel"/>-->
+                     <!--</div>-->
 
 
-                     <div style="width:1550px;">
-                        <p><h2 style="height:50px; text-align:center;"  > <i>Hollie Rosser, Kevin Lumbard, Jonathan Placzek, Edem Dosseh</i>, and last but not least <i>Will Wetzel</i></h2></p>
-                     </div>
+                     <!--<div style="width:1550px;">-->
+                        <!--<p><h2 style="height:50px; text-align:center;"  > <i>Hollie Rosser, Kevin Lumbard, Jonathan Placzek, Edem Dosseh</i>, and last but not least <i>Will Wetzel</i></h2></p>-->
+                     <!--</div>-->
 
                  </div>
+<div class="gallery">
+  <a target="_blank" href="https://github.com/CodeChasers8310/StormChasers_Blog">
+    <img src="{% static 'images/Hollie.png' %}" alt="Fjords" width="300" height="200">
+  </a>
+  <div class="desc">Hollie Rosser</div>
+</div>
 
+            <div class="gallery">
+  <a target="_blank" href="https://github.com/klumb">
+    <img src="{% static 'images/Kevin.png' %}" alt="Northern Lights" width="300" height="200">
+  </a>
+  <div class="desc">Kevin Lumbard</div>
+</div>
+
+<div class="gallery">
+  <a target="_blank" href="https://github.com/CodeChasers8310/StormChasers_Blog">
+    <img src="{% static 'images/John.png' %}" alt="Northern Lights" width="300" height="200">
+  </a>
+  <div class="desc">Jonathan Placzek</div>
+</div>
+
+<div class="gallery">
+  <a target="_blank" href="https://github.com/EdemD">
+    <img src="{% static 'images/Edem.png' %}" alt="Mountains" width="300" height="200">
+  </a>
+  <div class="desc">Edem Dosseh</div>
+</div>
+            <div class="gallery">
+  <a target="_blank" href="https://github.com/wwetzel">
+    <img src="{% static 'images/Will.png' %}" alt="Mountains" width="300" height="200">
+  </a>
+  <div class="desc">Will Wetzel</div>
+</div>
 
             </div>
         </body>

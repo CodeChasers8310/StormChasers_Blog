@@ -87,51 +87,102 @@ def new_top_post(request):
 
 @login_required
 def getForecast(request):
+    showingZIP = False
+    searchFailed = False
+    historicalSearchFailed = False
 
-    lat = request.GET['lat']
-    lon = request.GET['lon']
-    ZIP = request.GET['zip']
+    try:
+        lat = request.GET['lat']
+        lon = request.GET['lon']
+        ZIP = request.GET['zip']
 
-    getHistorical = False
-    year = request.GET['year']
-    month = request.GET['month']
-    day = request.GET['day']
-
+        getHistorical = False
+        year = request.GET['year']
+        month = request.GET['month']
+        day = request.GET['day']
+    except:
+        lat = ''
+        lon = ''
+        ZIP = ''
+        year = ''
+        month = ''
+        day = ''
     unixTime = ''
-    if year != '' and month != '' and day != '':
+
+    ########################
+    ### Input Validation ###
+    ########################
+    def isfloat(x):
+        try:
+            a = float(x)
+        except ValueError:
+            return False
+        else:
+            return True
+
+    def isint(x):
+        try:
+            a = float(x)
+            b = int(a)
+        except ValueError:
+            return False
+        else:
+            return True
+
+    # lat lon validation
+    if lat != '' or lon != '':
+        if isint(lat) and isint(lon) and isfloat(lat) and isfloat(lon):
+            pass
+        else:
+            lat, lon = '', ''
+            searchFailed = True
+    elif ZIP != '':
+        if isint(ZIP):
+            pass
+        else:
+            ZIP = ''
+            searchFailed = True
+
+    # Date validation
+    getHistorical = False
+    if year != '' or month != '' or day != '':
         getHistorical = True
 
         if len(year) != 4 or len(month) != 2 or len(day) != 2:
-            pass
-
+            getHistorical = False
+            historicalSearchFailed = True
         if not year.isdigit():
-            pass
+            getHistorical = False
+            historicalSearchFailed = True
         elif not month.isdigit():
-            pass
+            getHistorical = False
+            historicalSearchFailed = True
         elif not day.isdigit():
-            pass
+            getHistorical = False
+            historicalSearchFailed = True
 
-        pattern = '%Y%m%d'
-        date_time = str(year) + str(month) + str(day)
-        unixTime = str(int(time.mktime(time.strptime(date_time, pattern))))
+        if getHistorical:
+            pattern = '%Y%m%d'
+            date_time = str(year) + str(month) + str(day)
+            unixTime = str(int(time.mktime(time.strptime(date_time, pattern))))
 
     if ZIP == '':
         # If no user zipcode, get one from a large US city/zip
         if request.user.profile.zipcode:
-            ZIP = request.user.zipcode
+            ZIP = request.user.profile.zipcode
+            showingZIP = True
         else:
             ZIP = random.choice(['79936', '90011', '60629', '90650', '90201',
                                  '77084','92335','78521','77449','78572','90250',])
+            showingZIP = True
 
     openFailure = True
     wunderFailure = True
     darkSkyFailure = True
     nasaFailure = True
-
     nasaText = None
     json = {}
 
-    showingZIP = False
     showingLatLon = False
     # Dark Sky Key = 02ec64c91583d9ce29f972682bbfb4cf
     nasa_api_key = 'DQqDjMLODAtKzu2EGp4sntDhUlSFkPRMZ6rocPeC'
@@ -171,6 +222,11 @@ def getForecast(request):
         location = geolocator.geocode(ZIP)
         lat = location.latitude
         lon = location.longitude
+        print()
+        print('LAT LONG')
+        print('LAT' + str(lat))
+        print('LONG' + str(lon))
+        print()
         if getHistorical:
             darkSky = Requests.get('https://api.darksky.net/forecast/02ec64c91583d9ce29f972682bbfb4cf/' + str(lat) + ',' + str(lon) + ',' + unixTime)
             if darkSky.status_code == 200:
@@ -182,9 +238,11 @@ def getForecast(request):
         if nasa.status_code == 200:
             nasaFailure = False
             nasaText = nasa.json()
+        showingZIP = True
     else:
         ZIP = random.choice(['79936', '90011', '60629', '90650', '90201',
                                  '77084','92335','78521','77449','78572','90250',])
+        showingZIP = True
             
     # Unpack Open weathermap
     headers = ['Time (UTC)', 'Avg Temp (F)', 'Max Temp (F)', 'Min Temp (F)', 'Pressure', 'Cloudiness', 'Wind Speed', 'Wind Direction', 'Weather Main', 'Weather Descriptions']
@@ -206,7 +264,6 @@ def getForecast(request):
         displayFiveDayForecast = True
 
         for item in json['list']:
-        
             times.append(item['dt_txt'][:16])
             avgTemps.append(item['main']['temp'])
             maxTemps.append(item['main']['temp_max'])
@@ -244,12 +301,16 @@ def getForecast(request):
     alertsForDisplay = []
     if not wunderFailure:
         displayAlerts = True
-        if not wundText['alerts']:
-            for alert in wundText['alerts']:
-                alertsForDisplay.append([alert['description'], alert['date'], alert['expires'], alert['message']])
-        else:
-            alertsForDisplay.append(['No Alerts', 'No Alerts',
-                                    'No Alerts', 'No Alerts'])
+        try:
+            if not wundText['alerts']:
+                for alert in wundText['alerts']:
+                    alertsForDisplay.append([alert['description'], alert['date'], alert['expires'], alert['message']])
+            else:
+                alertsForDisplay.append(['No Alerts', 'No Alerts',
+                                        'No Alerts', 'No Alerts'])
+        except KeyError:
+            displayAlerts = False
+            wunderFailure = True
 
     # DarkSky Alert Unpacking
     # Histical Times = 6:00am - 12pm - 6pm - 12am - avg daily temp
@@ -300,9 +361,9 @@ def getForecast(request):
         darkSkyDisplayDict = {'summary':summary, 'minTempHistorical':minTempHistorical,
                               'maxTempHistorical':maxTempHistorical, 'avgTempHistorical':avgTempHistorical,
                               'avgHumidity':avgHumidity, 'avgWindSpeed':avgWindSpeed, 'avgCloudCover':avgCloudCover,
-                              'avgPrecipProb':avgPrecipProb, 'avgPrecipIntensity':avgPrecipIntensity,}
+                              'avgPrecipProb':avgPrecipProb, 'avgPrecipIntensity':avgPrecipIntensity,
+                              'searchFailed':searchFailed, 'historicalSearchFailed':historicalSearchFailed,}
 
-    print(nasaText)
     # NASA API Image
     displayNasa = False
     nasaDisplayDict = {}
@@ -319,6 +380,11 @@ def getForecast(request):
                        'image_url':image_url, 'planet':planet, 'dateTime':dateTime}
 
 
+    if showingZIP and showingLatLon:
+        showingZIP = False
+
+    print(historicalSearchFailed)
+    print(searchFailed)
 
     return render(request, 'blog/dashboard.html', {'lat':lat, 'lon':lon,
                                                    'ZIP':ZIP, 'openFailure':openFailure,
@@ -328,7 +394,8 @@ def getForecast(request):
                                                    'darkSkyDisplayDict':darkSkyDisplayDict, 'displayHistorical':displayHistorical,
                                                    'displayAlerts':displayAlerts, 'displayFiveDayForecast':displayFiveDayForecast,
                                                    'year':year, 'month':month, 'day':day, 'displayNasa':displayNasa,
-                                                   'nasaDisplayDict':nasaDisplayDict,
+                                                   'nasaDisplayDict':nasaDisplayDict, 'searchFailed':searchFailed,
+                                                   'historicalSearchFailed':historicalSearchFailed,
                                                     })
 
 @login_required
@@ -408,7 +475,6 @@ def blog(request):
     return render(request, 'blog/blog.html', {'topPosts': topPosts, 'blogImages': displayImages})
 
 
-@login_required
 def blog_search(request):  # , formTags):
     if request.method == 'GET':
         # SearchForm
